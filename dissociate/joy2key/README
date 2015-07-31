@@ -1,0 +1,4 @@
+This software is a keyboard emulator for joysticks.
+It converts joystick input into keyboard input (and mouse input).
+
+Use it when you want to control an application with joysticks that doesn't support joystick input. If you wish, you can control even Word, Excel, etc. with joysticks! 

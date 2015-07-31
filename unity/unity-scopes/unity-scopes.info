@@ -1,0 +1,112 @@
+PRGNAM="unity-scopes"
+VERSION="1.0"
+HOMEPAGE=""
+DOWNLOAD="https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-audacious_0.1+13.10.20130927.1.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-audacious_0.1+13.10.20130927.1-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-calculator_0.1+14.04.20140328.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-calculator_0.1+14.04.20140328-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-chromiumbookmarks_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-chromiumbookmarks_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-clementine_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-clementine_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-colourlovers_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-colourlovers_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-devhelp_0.1+14.04.20140328.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-devhelp_0.1+14.04.20140328-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-deviantart_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-deviantart_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-firefoxbookmarks_0.1+13.10.20130809.1.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-firefoxbookmarks_0.1+13.10.20130809.1-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-gallica_0.1+13.10.20130816.2.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-gallica_0.1+13.10.20130816.2-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-gdrive_0.9+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-gdrive_0.9+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-github_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-github_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-gmusicbrowser_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-gmusicbrowser_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-googlenews_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-googlenews_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-gourmet_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-gourmet_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-guayadeque_0.1+13.10.20130927.1.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-guayadeque_0.1+13.10.20130927.1-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-manpages_3.0+14.04.20140324.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-manpages_3.0+14.04.20140324-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-musique_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-musique_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-openclipart_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-openclipart_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-openweathermap_0.1+13.10.20130828.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-openweathermap_0.1+13.10.20130828-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-soundcloud_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-soundcloud_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-texdoc_0.1+14.04.20140328.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-texdoc_0.1+14.04.20140328-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-tomboy_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-tomboy_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-virtualbox_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-virtualbox_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-yahoostock_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-yahoostock_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-yelp_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-yelp_0.1+13.10.20130723-0ubuntu1.diff.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-zotero_0.1+13.10.20130723.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-zotero_0.1+13.10.20130723-0ubuntu1.diff.gz"
+MD5SUM="f28b0e36d1c06c10d4c468fb4abc6ec0 \  
+	1eebc38be0d40dc0c4167df687d4783a \  
+	76e37019876a380f1a6ac05f7df67b75 \  
+	57a48bee3caf87ec58043bf37f3449ee \  
+	ca2ea33c23769aa16ae083a3953b289b \  
+	f6765ae0bf144249443b1269fee173b9 \  
+	72579f4849c810f856d50fbe520c6357 \  
+	c836d8efbc00a4f6dd90b444a500597b \  
+	5ff065d57c07633b38e0df70fefc322f \  
+	e78dee1f0007efd55d392a04a3957190 \  
+	f10bb36c591df3774d391cc0f5c05552 \  
+	2732f51efff4cadf0e9d88d08a3d6c3a \  
+	55e5008742782fc25ddb2c501353e69a \  
+	e3eb67819357a4b2a670b593bd4b3a0a \  
+	8867390504a90cff15a3ff396fc8ae24 \  
+	fd680f3a9fa40fe034e26e09fca93cd3 \  
+	65d267a7fa651a4e007d543bff7082cc \  
+	ef85dadbe3249f0c481b8b4b766bc2aa \  
+	5209d121d2c171a815514bab3df8232c \  
+	2da52feeba7c57632b85f76cb88c18e3 \  
+	b3a26a66be844db57effdbec0b8ef568 \  
+	9ecf99364abdba038f9fa4cd885022f6 \  
+	7842cd3e975115eba7a088e7eaf9b0bd \  
+	b2dac6ae86f2253da5b12f01f270399d \  
+	7a970a930b0a89c10514752f5d5cf375 \  
+	81b3565266017b5641daa9ace18e06df \  
+	f800c079cbb5490b3317d4b52158805f \  
+	20aa6ac430e9f3f4204c343d22113154 \  
+	d81223de87c3ad8ed3672812ca75d982 \  
+	f66e363376600e460dd23d711b16fe6b \  
+	77d3c289aabbfcf8ef150e14c6b4e74d \  
+	cc128130cea8a61c1f14f58cbed4754c \  
+	be5cec9418cf899b573543da175996b6 \  
+	6220c389f024e2644eb7f0d111bc278e \  
+	bbd7b76f1f04576cb23b348968f37cdd \  
+	f2321881710b25e8736e1aeed3125e68 \  
+	4a0a87170e1063829d4d22008112b330 \  
+	03b9baaf11466ac80d3f8d4aae1fd178 \  
+	4bc460cb200a22efd90bf3a1f6e61867 \  
+	9ece8a53f535566e6e678435b5dbf554 \  
+	019cc3c8811640f18465699f8e74dedb \  
+	7c33c922354ece9c55642ca6afa957d6 \  
+	29df5fe7e4da196e2ae5102335b4f7d2 \  
+	ef7d2956945c75c6682801a108f023a1 \  
+	3233ff3663c42580bf8dff3805bbca1e \  
+	34d33aa496a503f1fd6a110a33546578 \  
+	e7e67728f6690208380d04e42342cbd6 \  
+	a9b740a8992a54070d991bdf03d1e169 \  
+	f68edb22a1c52be10567ae084dea4e0c \  
+	c4469d304a76f84fb4ef60dc0d21385d \  
+	09c84f3edd889bca6370592f736cdc30 \  
+	b0880d01ce5679af94bde3d2eaed8362"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="%BuildOrder%"
+MAINTAINER="Macius Kuzmin"
+EMAIL="szczecinska.duma@gmail.com"

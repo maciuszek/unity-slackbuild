@@ -1,0 +1,7 @@
+When removing you'll want to run
+
+pre-removal:
+systemctl disable bamfwatcher.service
+
+post-removal:
+gio-querymodules /usr/lib/gio/modules

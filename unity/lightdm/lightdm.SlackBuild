@@ -1,0 +1,172 @@
+#!/bin/sh
+
+# Slackware build script for lightdm
+
+# Copyright 2014 Matthew Kuzminski Toronto, ON
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+PRGNAM=lightdm # replace with name of program
+VERSION=${VERSION:-1.12.0} # replace with version of program
+BUILD=${BUILD:-1}
+TAG=${TAG:-_uSB}
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+case "$( uname -m )" in
+i?86) ARCH=i486 ;;
+arm*) ARCH=arm ;;
+# Unless $ARCH is already set, use uname -m for all other archs:
+*) ARCH=$( uname -m ) ;;
+esac
+fi
+
+CWD=$(pwd)
+TMP=${TMP:-/tmp/build}
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp} # Drop the package in /tmp
+
+if [ "$ARCH" = "i486" ]; then
+SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+SLKCFLAGS="-O2 -fPIC"
+LIBDIRSUFFIX="64"
+else
+SLKCFLAGS="-O2"
+LIBDIRSUFFIX=""
+fi
+
+set -e # Exit on most errors
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf lightdm-1.12.0
+tar xvf $CWD/lightdm-1.12.0.tar.xz
+cd lightdm-1.12.0
+chown -R root:root .
+#find -L . ( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 ) -exec chmod 755 {} ; -o ( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 ) -exec chmod 644 {} ;
+
+# Apply Ubuntu patches
+
+# Disable patches
+# Do not use Ubuntu's language-tools
+#sed -i '/04_language_handling.patch/d' debian/patches/series
+
+#for i in $(grep -v '#' debian/patches/series); do
+#patch -p1 -i "debian/patches/${i}"
+#done
+
+# Do not depend on Debian/Ubuntu specific adduser package
+#patch -p1 -i "$CWD"/0001-guest-account-Use-cross-distro-commands.patch
+
+# Add support for settings GSettings/dconf defaults in the guest session. Just
+# put the files in /etc/guest-session/gsettings/. The file format is the same
+# as the regular GSettings override files.
+#patch -p1 -i "$CWD"/0002-guest-account-Add-default-GSettings-support.patch
+
+patch -p1 -i "$CWD"/Makefile.am.diff
+
+export MOC4=/usr/lib/qt/bin/moc
+export MOC5=/usr/lib/qt5/bin/moc
+
+gtkdocize
+#aclocal --install --force
+autoreconf -vfi
+intltoolize -f
+
+./configure \
+  --prefix=/usr \
+  --sysconfdir=/etc \
+  --sbindir=/usr/bin \
+  --disable-static \
+  --libexecdir=/usr/lib/lightdm \
+  --localstatedir=/var \
+  --with-user-session=ubuntu \
+  --with-greeter-user=lightdm
+
+make
+make DESTDIR="$PKG" install
+
+#install -dm755 "$PKG/usr/lib/systemd/system/"
+
+# Additional LightDM configuration files
+#install -dm755 "$PKG"/etc/lightdm/lightdm.conf.d/
+#install -m644 debian/50-{xserver-command,greeter-wrapper,guest-wrapper}.conf "$PKG"/etc/lightdm/lightdm.conf.d/
+
+# Install PAM service
+install -dm755 "$PKG"/etc/pam.d/
+install -m644 "$CWD"/lightdm.pam "$PKG"/etc/pam.d/lightdm
+install -m644 "$CWD"/lightdm-autologin.pam "$PKG"/etc/pam.d/lightdm-autologin
+install -m644 "$CWD"/lightdm-greeter.pam "$PKG"/etc/pam.d/lightdm-greeter
+
+# Install configuration files
+install -dm755 "$PKG"/usr/share/doc/lightdm/
+install -m644 "$PKG"/etc/lightdm/lightdm.conf "$PKG"/usr/share/doc/lightdm/
+install -m644 "$PKG"/etc/lightdm/keys.conf "$PKG"/usr/share/doc/lightdm/
+install -m644 "$CWD"/lightdm-gtk-greeter.conf "$PKG"/etc/lightdm/
+
+# Install binaries and scripts
+#install -dm755 "$PKG"/usr/bin/
+#install -m755 debian/guest-account "$PKG"/usr/bin/
+#install -m755 debian/lightdm-session "$PKG"/usr/bin/
+#install -m755 debian/lightdm-greeter-session "$PKG"/usr/lib/lightdm/
+#chmod +x "$PKG"/usr/lib/lightdm/lightdm-greeter-session
+
+# Install systemd service
+#install -m644 "$CWD"/lightdm.service "$PKG"/usr/lib/systemd/system/
+
+# Install systemd tmpfiles.d file
+#install -dm755 "$PKG"/usr/lib/tmpfiles.d/
+#install -m644 "$CWD"/lightdm.tmpfiles.d "$PKG"/usr/lib/tmpfiles.d/lightdm.conf
+
+# Install PolicyKit rules from Fedora which allow the lightdm user to access
+# the systemd-logind, consolekit, and upower DBus interfaces
+install -dm700 "$PKG"/usr/share/polkit-1/rules.d/
+install -m644 "$CWD"/lightdm.rules "$PKG"/usr/share/polkit-1/rules.d/
+
+# Configuration settings that differ from Ubuntu
+sed -i -e 's/^(minimum-uid=).*$/11000/g' -e 's@/usr(/sbin/nologin)$@1@g' "$PKG"/etc/lightdm/users.conf
+
+# Configuration files specific to Ubuntu
+rm -rvf "$PKG"/etc/init/
+
+# Create GSettings defaults directory
+install -dm755 "$PKG"/etc/guest-session/gsettings/
+
+# Remove apparmor stuff
+rm -rvf "$PKG"/etc/apparmor.d/
+
+find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+# cp -a # <documentation> # $PKG/usr/doc/$PRGNAM-$VERSION
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+#cat $CWD/setup.$PKGNAM > $PKG/var/log/setup/setup.$PKGNAM
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

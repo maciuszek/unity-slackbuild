@@ -1,0 +1,11 @@
+--- a/Makefile.am	2014-10-06 16:05:53.390104581 -0400
++++ b/Makefile.am	2014-10-06 16:06:10.264104982 -0400
+@@ -6,7 +6,7 @@
+ if COMPILE_TESTS
+ SUBDIRS += tests
+ endif
+-SUBDIRS += data po src doc help
++SUBDIRS += data po src doc
+ 
+ DISTCHECK_CONFIGURE_FLAGS = --enable-introspection --enable-gtk-doc
+ 

@@ -1,0 +1,3 @@
+cmake must be downgraded to build unity as the build will fail with version 2.8.12
+
+network-manager-applet-ubuntu is being skipped due to slackware including a sufficent version of this

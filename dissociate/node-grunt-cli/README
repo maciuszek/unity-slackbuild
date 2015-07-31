@@ -1,0 +1,10 @@
+Grunt is a task-based tool that speeds up 
+workflows by reducing the effort required to prepare 
+assets for javascript production. It does this by 
+wrapping up jobs into tasks that are compiled 
+automatically as you go along. Basically, you can use 
+Grunt on most tasks that you consider to be grunt work 
+and would normally have to manually configure 
+and run yourself.
+
+Grunt is built ontop of Node.js.

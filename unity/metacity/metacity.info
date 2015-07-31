@@ -1,0 +1,12 @@
+PRGNAM="metacity"
+VERSION="2.34.13.0ubuntu4"
+HOMEPAGE=""
+DOWNLOAD="http://ftp.gnome.org/pub/gnome/sources/metacity/2.34/metacity-2.34.13.tar.xz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/metacity_2.34.13-0ubuntu4.debian.tar.gz"
+MD5SUM="6d89b71672d4fa49fc87f83d610d0ef6 \  
+	fe91b19ac420017768791744899d52db"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="%BuildOrder%"
+MAINTAINER="Macius Kuzmin"
+EMAIL="szczecinska.duma@gmail.com"

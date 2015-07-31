@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|' on
+# the right side marks the last column you can put a character in.  You must make
+# exactly 11 lines for the formatting to be correct.  It's also customary to
+# leave one space after the ':'.
+
+             |-----handy-ruler------------------------------------------------------|
+libgpod-sharp: Libgpod-Sharp (Libgpod .NET Library)
+libgpod-sharp:
+libgpod-sharp: Libgpod is a library meant to abstract access to iPod content
+libgpod-sharp: It provides an easy-to-use API  to retrieve the list of files
+libgpod-sharp: and playlists stored on an iPod, modify  them, and  save them
+libgpod-sharp: back to the iPod. This package provides .NET bindings.
+libgpod-sharp:
+libgpod-sharp:
+libgpod-sharp:
+libgpod-sharp:
+libgpod-sharp:

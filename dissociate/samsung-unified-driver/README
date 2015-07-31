@@ -1,0 +1,11 @@
+Unified Linux Driver for Samsung printers and scanners.
+
+After installation you need to add 'smfp' to /etc/sane.d/dll.conf
+Command: "echo smfp >> /etc/sane.d/dll.conf"
+
+This requires libstdc++5 ( in slackware repos part of gcc-4.4.4-i486-1 ), 
+libtiff ( in slackware repos ), cups ( in slackware repos ), ghostscript ( in slackware repos ) 
+and sane ( in slackware repos ).
+
+Optional requirements are hal-cups-utils ( Allows scanner and printer functions with cups>=1.4 
+without blocking usblp ).

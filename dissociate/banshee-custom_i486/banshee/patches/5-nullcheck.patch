@@ -1,0 +1,33 @@
+From bb9b6b9d8da756945e278511139982df437606b0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9s=20G=2E=20Aragoneses?= <knocte@gmail.com>
+Date: Tue, 15 Oct 2013 15:03:27 +0200
+Subject: libbanshee: earlier check for NULL via g_return_val_if_fail()
+
+If your gstreamer is broken, it can happen that your player->playbin
+ends up being NULL because it couldn't be created somehow. In this
+case, we should not try to connect to any signal of it, and bail
+earlier.
+
+diff --git a/libbanshee/banshee-player-pipeline.c b/libbanshee/banshee-player-pipeline.c
+index 28bae33..1222142 100644
+--- a/libbanshee/banshee-player-pipeline.c
++++ b/libbanshee/banshee-player-pipeline.c
+@@ -294,13 +294,13 @@ _bp_pipeline_construct (BansheePlayer *player)
+     // source and decoder elements) based on source URI and stream content
+     player->playbin = gst_element_factory_make ("playbin", "playbin");
+ 
++    g_return_val_if_fail (player->playbin != NULL, FALSE);
++
+     // FIXME: Connect a proxy about-to-finish callback that will generate a next-track-starting callback.
+     // This can be removed once playbin generates its own next-track signal.
+     // bgo#584987 - this is included in >= 0.10.26
+     g_signal_connect (player->playbin, "about-to-finish", G_CALLBACK (bp_about_to_finish_callback), player);
+ 
+-    g_return_val_if_fail (player->playbin != NULL, FALSE);
+-
+     g_signal_connect (player->playbin, "notify::volume", G_CALLBACK (bp_volume_changed_callback), player);
+     g_signal_connect (player->playbin, "video-changed", G_CALLBACK (playbin_stream_changed_cb), player);
+     g_signal_connect (player->playbin, "audio-changed", G_CALLBACK (playbin_stream_changed_cb), player);
+-- 
+cgit v0.10.1
+

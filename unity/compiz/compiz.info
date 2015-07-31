@@ -1,0 +1,12 @@
+PRGNAM="compiz"
+VERSION="0.9.11.14.04.20140423"
+HOMEPAGE=""
+DOWNLOAD="https://launchpad.net/ubuntu/+archive/primary/+files/compiz_0.9.11+14.04.20140423.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/compiz_0.9.11+14.04.20140423-0ubuntu1.diff.gz"
+MD5SUM="668371027f79b8615bb5731472d6f62f \  
+	532ae5a5114b1b898b4cb2d4aecbf8fd"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="%BuildOrder%"
+MAINTAINER="Macius Kuzmin"
+EMAIL="szczecinska.duma@gmail.com"

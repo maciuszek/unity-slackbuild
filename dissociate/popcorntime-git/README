@@ -1,0 +1,13 @@
+Popcorn Time is a multi-platform, open source BitTorrent client 
+that includes an integrated media player. The program is a free 
+alternative to subscription-based video streaming services such 
+as Netflix. Popcorn Time uses sequential downloading to play 
+copies of films listed by the website yts.to, also known as YIFY 
+(although other trackers can be added and used manually).
+
+Due to naming/naming convention changes when upgrading from 
+0.3.7.2, you will have to manually remove the the exsisting 
+version for a clean install.
+
+# As root
+removepkg popcorntime-0.3.7.2-i486-1_SBo

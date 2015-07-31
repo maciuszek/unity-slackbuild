@@ -1,0 +1,12 @@
+PRGNAM="libindicate-qt"
+VERSION="0.2.5.91.5"
+HOMEPAGE=""
+DOWNLOAD="http://launchpad.net/libindicate-qt/libindicate-0.5/0.2.5.91/+download/libindicate-qt-0.2.5.91.tar.bz2 \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/libindicate-qt_0.2.5.91-5.debian.tar.gz"
+MD5SUM="67e474d55c8ab0d7d2fd3f9da651eba3 \  
+	474aad9931657634849b33421b2c06e6"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="%BuildOrder%"
+MAINTAINER="Macius Kuzmin"
+EMAIL="szczecinska.duma@gmail.com"

@@ -1,0 +1,141 @@
+#!/bin/sh
+
+# Slackware build script for packagekit
+
+# Copyright 2014 Matthew Kuzminski Toronto, ON
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+PRGNAM=packagekit # replace with name of program
+VERSION=${VERSION:-0.9.5} # replace with version of program
+BUILD=${BUILD:-1}
+TAG=${TAG:-_uSB}
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+case "$( uname -m )" in
+i?86) ARCH=i486 ;;
+arm*) ARCH=arm ;;
+# Unless $ARCH is already set, use uname -m for all other archs:
+*) ARCH=$( uname -m ) ;;
+esac
+fi
+
+CWD=$(pwd)
+TMP=${TMP:-/tmp/build}
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp} # Drop the package in /tmp
+
+if [ "$ARCH" = "i486" ]; then
+SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+SLKCFLAGS="-O2 -fPIC"
+LIBDIRSUFFIX="64"
+else
+SLKCFLAGS="-O2"
+LIBDIRSUFFIX=""
+fi
+
+set -e # Exit on most errors
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf PackageKit-0.9.5
+tar xvf $CWD/PackageKit-0.9.5.tar.xz
+cd PackageKit-0.9.5
+chown -R root:root .
+
+#find -L . ( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 ) -exec chmod 755 {} ; -o ( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 ) -exec chmod 644 {} ;
+
+#sed -i 's@SUBDIRS = test@SUBDIRS =@' 'backends/Makefile.in'
+#sed -i 's@python @python2 @' 'lib/python/packagekit/Makefile.in'
+#sed -i 's@bin/python@bin/python2@' 'lib/python/packagekit/'*.py
+
+#patch -Np1 -i "$CWD/adopt.patch"
+#patch -Np1 -i "$CWD/alpm.patch"
+#patch -Np1 -i "$CWD/libarchive.patch"
+#sed -i 's@sbin_PROGRAMS@bin_PROGRAMS@' 'contrib/device-rebind/Makefile.am'
+
+export PYTHON=/usr/bin/python2
+./autogen.sh \
+  --prefix=/usr \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --libexecdir=/usr/lib/PackageKit \
+  --enable-strict \
+  --disable-static \
+  --disable-gtk-doc \
+  --disable-tests \
+  --disable-local \
+  --disable-browser-plugin \
+  --disable-gstreamer-plugin \
+  --disable-gtk-module \
+  --disable-command-not-found \
+  --disable-cron \
+  --disable-debuginfo-install \
+  --enable-pm-utils \
+  --disable-dummy \
+  --disable-systemd \
+  --disable-systemd-updates
+#  --enable-alpm
+#  --with-default-backend=alpm
+
+make -s CFLAGS='-D_FILE_OFFSET_BITS=64 -O2 -Wno-unused-local-typedefs -Wno-deprecated-declarations -Wno-suggest-attribute=format'
+make DESTDIR="$PKG" install
+
+rm -rf "$PKG/usr/include/PackageKit/packagekit-qt"*
+rm -rf "$PKG/usr/lib/libpackagekit-qt"*
+rm -rf "$PKG/usr/lib/pkgconfig/packagekit-qt"*
+rm -rf "$PKG/usr/lib/cmake"
+
+rm -rf "$PKG/usr/lib/python"*
+rm -rf "$PKG/usr/share/PackageKit/website"
+
+#mkdir -p "$PKG/usr/share/bash-completion/completions"
+#mv "$PKG/etc/bash_completion.d/pk-completion.bash" "$PKG/usr/share/bash-completion/completions/pkcon"
+#rmdir "$PKG/etc/bash_completion.d"
+
+touch "$PKG/var/log/PackageKit"
+
+#cd lib/packagekit-qt2
+#make DESTDIR="$PKG" install
+#cd  -
+
+cd lib/python
+make DESTDIR="$PKG" install
+cd  -
+
+find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+# cp -a # <documentation> # $PKG/usr/doc/$PRGNAM-$VERSION
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+#cat $CWD/setup.$PKGNAM > $PKG/var/log/setup/setup.$PKGNAM
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

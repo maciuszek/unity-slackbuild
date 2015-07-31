@@ -1,0 +1,12 @@
+PRGNAM="gnome-screensaver"
+VERSION="3.6.1"
+HOMEPAGE=""
+DOWNLOAD="http://ftp.gnome.org/pub/GNOME/sources/gnome-screensaver/3.6/gnome-screensaver-3.6.1.tar.xz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/gnome-screensaver_3.6.1-0ubuntu13.debian.tar.gz"
+MD5SUM="881cc58daa7cd8602737912ae5715cc8 \  
+	e766584499605252e03239ab09966065"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="%BuildOrder%"
+MAINTAINER="Macius Kuzmin"
+EMAIL="szczecinska.duma@gmail.com"

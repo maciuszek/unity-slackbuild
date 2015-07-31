@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                 |-----handy-ruler------------------------------------------------------|
+android-sdk: android-sdk
+android-sdk:
+android-sdk: The Android SDK provides you the API 
+android-sdk: libraries and developer tools necessary to 
+android-sdk: build, test, and debug apps for Android.
+android-sdk:
+android-sdk: Homepage: http://developer.android.com/sdk/index.html?hl=sk
+android-sdk:
+android-sdk:
+android-sdk:
+android-sdk:

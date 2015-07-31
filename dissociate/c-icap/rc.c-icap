@@ -1,0 +1,27 @@
+#!/bin/sh
+
+c-icap_start() {
+  /opt/c-icap/bin/c-icap 
+}
+
+c-icap_stop() {
+  pkill -TERM c-icap 1>/dev/null 2>/dev/null
+}
+
+case "$1" in
+  start)
+    c-icap_start
+    ;;
+  stop)
+    c-icap_stop
+    ;;
+  restart)
+    c-icap_stop
+    sleep 1
+    c-icap_start
+    ;;
+  *)
+    printf "Usage: $0 {start|stop|restart}\n"
+    exit 1
+    ;;
+esac

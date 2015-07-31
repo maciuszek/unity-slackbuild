@@ -1,0 +1,15 @@
+ScudCloud is a non official open-source Linux (Debian, Ubuntu, 
+Kubuntu, Mint, Arch) desktop client for Slack©.i
+
+Slack© is a platform for team communication.
+
+ScudCloud uses the QT library + Webkit to render the web version 
+of Slack, but using the QWebkit-Native bridge to improve desktop 
+integration with:
+
+multiple teams support,
+native system notifications,
+count of unread direct mentions at launcher/sytray icon,
+alert/wobbling on new messages,
+channels quicklist (Unity only),
+optional "Close to Tray".

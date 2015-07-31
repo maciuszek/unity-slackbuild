@@ -1,0 +1,389 @@
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/abstractaudiooutput.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/abstractaudiooutput.sip
+index a0adcb4..898e5a7 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/abstractaudiooutput.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/abstractaudiooutput.sip
+@@ -30,13 +30,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <abstractaudiooutput.h>
++#include <phonon/abstractaudiooutput.h>
+ %End
+ 
+     class AbstractAudioOutput : QObject, Phonon::MediaNode /NoDefaultCtors/
+     {
+ %TypeHeaderCode
+-#include <abstractaudiooutput.h>
++#include <phonon/abstractaudiooutput.h>
+ %End
+ 
+     public:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/abstractvideooutput.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/abstractvideooutput.sip
+index 0a7f48e..4f87085 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/abstractvideooutput.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/abstractvideooutput.sip
+@@ -30,13 +30,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <abstractvideooutput.h>
++#include <phonon/abstractvideooutput.h>
+ %End
+ 
+     class AbstractVideoOutput : Phonon::MediaNode /NoDefaultCtors/
+     {
+ %TypeHeaderCode
+-#include <abstractvideooutput.h>
++#include <phonon/abstractvideooutput.h>
+ %End
+     };
+ };
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/audiooutput.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/audiooutput.sip
+index bbf0397..16a674d 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/audiooutput.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/audiooutput.sip
+@@ -30,13 +30,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <audiooutput.h>
++#include <phonon/audiooutput.h>
+ %End
+ 
+     class AudioOutput : Phonon::AbstractAudioOutput
+     {
+ %TypeHeaderCode
+-#include <audiooutput.h>
++#include <phonon/audiooutput.h>
+ %End
+ 
+     public:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/backendcapabilities.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/backendcapabilities.sip
+index 6a79e64..b074b7d 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/backendcapabilities.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/backendcapabilities.sip
+@@ -30,19 +30,19 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <backendcapabilities.h>
++#include <phonon/backendcapabilities.h>
+ %End
+ 
+     namespace BackendCapabilities
+     {
+ %TypeHeaderCode
+-#include <backendcapabilities.h>
++#include <phonon/backendcapabilities.h>
+ %End
+ 
+         class Notifier : QObject /NoDefaultCtors,PyQtNoQMetaObject/
+         {
+ %TypeHeaderCode
+-#include <backendcapabilities.h>
++#include <phonon/backendcapabilities.h>
+ %End
+ 
+         signals:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/effect.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/effect.sip
+index a1c5a74..c593c05 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/effect.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/effect.sip
+@@ -30,13 +30,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <effect.h>
++#include <phonon/effect.h>
+ %End
+ 
+     class Effect : QObject, Phonon::MediaNode
+     {
+ %TypeHeaderCode
+-#include <effect.h>
++#include <phonon/effect.h>
+ %End
+ 
+     public:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/effectparameter.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/effectparameter.sip
+index b4de18b..e289b14 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/effectparameter.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/effectparameter.sip
+@@ -27,7 +27,7 @@
+ 
+ %If (Qt_4_4_0 -)
+ %ModuleCode
+-#include <effectparameter.h>
++#include <phonon/effectparameter.h>
+ %End
+ %End
+ 
+@@ -36,13 +36,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <effectparameter.h>
++#include <phonon/effectparameter.h>
+ %End
+ 
+     class EffectParameter
+     {
+ %TypeHeaderCode
+-#include <effectparameter.h>
++#include <phonon/effectparameter.h>
+ %End
+ 
+     public:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/effectwidget.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/effectwidget.sip
+index 701a066..9e50c33 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/effectwidget.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/effectwidget.sip
+@@ -30,13 +30,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <effectwidget.h>
++#include <phonon/effectwidget.h>
+ %End
+ 
+     class EffectWidget : QWidget
+     {
+ %TypeHeaderCode
+-#include <effectwidget.h>
++#include <phonon/effectwidget.h>
+ %End
+ 
+     public:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/mediacontroller.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/mediacontroller.sip
+index 254e13a..b433bd4 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/mediacontroller.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/mediacontroller.sip
+@@ -27,7 +27,7 @@
+ 
+ %If (Qt_4_4_0 -)
+ %ModuleCode
+-#include <mediacontroller.h>
++#include <phonon/mediacontroller.h>
+ %End
+ %End
+ 
+@@ -36,13 +36,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <mediacontroller.h>
++#include <phonon/mediacontroller.h>
+ %End
+ 
+     class MediaController : QObject
+     {
+ %TypeHeaderCode
+-#include <mediacontroller.h>
++#include <phonon/mediacontroller.h>
+ %End
+ 
+     public:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/medianode.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/medianode.sip
+index b84daaa..ee389f9 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/medianode.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/medianode.sip
+@@ -30,13 +30,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <medianode.h>
++#include <phonon/medianode.h>
+ %End
+ 
+     class MediaNode /NoDefaultCtors/
+     {
+ %TypeHeaderCode
+-#include <medianode.h>
++#include <phonon/medianode.h>
+ %End
+ 
+     public:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/mediaobject.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/mediaobject.sip
+index dd62d8e..78e04af 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/mediaobject.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/mediaobject.sip
+@@ -30,13 +30,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <mediaobject.h>
++#include <phonon/mediaobject.h>
+ %End
+ 
+     class MediaObject : QObject, Phonon::MediaNode
+     {
+ %TypeHeaderCode
+-#include <mediaobject.h>
++#include <phonon/mediaobject.h>
+ %End
+ 
+ %ConvertToSubClassCode
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/mediasource.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/mediasource.sip
+index e28783b..97a4f7c 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/mediasource.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/mediasource.sip
+@@ -30,13 +30,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <mediasource.h>
++#include <phonon/mediasource.h>
+ %End
+ 
+     class MediaSource
+     {
+ %TypeHeaderCode
+-#include <mediasource.h>
++#include <phonon/mediasource.h>
+ %End
+ 
+     public:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/objectdescription.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/objectdescription.sip
+index 85552c2..0d6219e 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/objectdescription.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/objectdescription.sip
+@@ -30,7 +30,7 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <objectdescription.h>
++#include <phonon/objectdescription.h>
+ %End
+ 
+ // The ObjectDescription template and implementations.
+@@ -41,7 +41,7 @@ template<type>
+ class ObjectDescription
+ {
+ %TypeHeaderCode
+-#include <objectdescription.h>
++#include <phonon/objectdescription.h>
+ %End
+ 
+ public:
+@@ -80,7 +80,7 @@ template<type>
+ class ObjectDescriptionModel : QAbstractListModel
+ {
+ %TypeHeaderCode
+-#include <objectdescriptionmodel.h>
++#include <phonon/objectdescriptionmodel.h>
+ %End
+ 
+ public:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/path.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/path.sip
+index f4e503d..53679f0 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/path.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/path.sip
+@@ -30,13 +30,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <path.h>
++#include <phonon/path.h>
+ %End
+ 
+     class Path
+     {
+ %TypeHeaderCode
+-#include <path.h>
++#include <phonon/path.h>
+ %End
+ 
+     public:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/phononnamespace.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/phononnamespace.sip
+index 8d138e4..346594c 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/phononnamespace.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/phononnamespace.sip
+@@ -30,7 +30,7 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <phononnamespace.h>
++#include <phonon/phononnamespace.h>
+ %End
+ 
+     enum DiscType
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/seekslider.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/seekslider.sip
+index 6d9b13e..8c531d1 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/seekslider.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/seekslider.sip
+@@ -30,13 +30,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <seekslider.h>
++#include <phonon/seekslider.h>
+ %End
+ 
+     class SeekSlider : QWidget
+     {
+ %TypeHeaderCode
+-#include <seekslider.h>
++#include <phonon/seekslider.h>
+ %End
+ 
+     public:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/videoplayer.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/videoplayer.sip
+index cd72c55..714ac7b 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/videoplayer.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/videoplayer.sip
+@@ -30,13 +30,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <videoplayer.h>
++#include <phonon/videoplayer.h>
+ %End
+ 
+     class VideoPlayer : QWidget
+     {
+ %TypeHeaderCode
+-#include <videoplayer.h>
++#include <phonon/videoplayer.h>
+ %End
+ 
+     public:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/videowidget.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/videowidget.sip
+index 9325ca6..91aa630 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/videowidget.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/videowidget.sip
+@@ -30,13 +30,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <videowidget.h>
++#include <phonon/videowidget.h>
+ %End
+ 
+     class VideoWidget : QWidget, Phonon::AbstractVideoOutput
+     {
+ %TypeHeaderCode
+-#include <videowidget.h>
++#include <phonon/videowidget.h>
+ %End
+ 
+     public:
+diff --git a/PyQt-x11-gpl-4.11.3/sip/phonon/volumeslider.sip b/PyQt-x11-gpl-4.11.3/sip/phonon/volumeslider.sip
+index 6f88730..bad70b3 100644
+--- a/PyQt-x11-gpl-4.11.3/sip/phonon/volumeslider.sip
++++ b/PyQt-x11-gpl-4.11.3/sip/phonon/volumeslider.sip
+@@ -30,13 +30,13 @@
+ namespace Phonon
+ {
+ %TypeHeaderCode
+-#include <volumeslider.h>
++#include <phonon/volumeslider.h>
+ %End
+ 
+     class VolumeSlider : QWidget
+     {
+ %TypeHeaderCode
+-#include <volumeslider.h>
++#include <phonon/volumeslider.h>
+ %End
+ 
+     public:

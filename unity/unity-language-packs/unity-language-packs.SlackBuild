@@ -1,0 +1,700 @@
+#!/bin/sh
+
+# Slackware build script for unity-language-packs
+
+# Copyright 2014 Matthew Kuzminski Toronto, ON
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+PRGNAM=unity-language-packs # replace with name of program
+VERSION=${VERSION:-14.04} # replace with version of program
+BUILD=${BUILD:-1}
+TAG=${TAG:-_uSB}
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+case "$( uname -m )" in
+i?86) ARCH=i486 ;;
+arm*) ARCH=arm ;;
+# Unless $ARCH is already set, use uname -m for all other archs:
+*) ARCH=$( uname -m ) ;;
+esac
+fi
+
+CWD=$(pwd)
+TMP=${TMP:-/tmp/build}
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp} # Drop the package in /tmp
+
+if [ "$ARCH" = "i486" ]; then
+SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+SLKCFLAGS="-O2 -fPIC"
+LIBDIRSUFFIX="64"
+else
+SLKCFLAGS="-O2"
+LIBDIRSUFFIX=""
+fi
+
+set -e # Exit on most errors
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+
+rm -rf unity-language-packs-14.04
+mkdir unity-language-packs-14.04
+cd unity-language-packs-14.04
+
+tar xvf $CWD/language-pack-aa-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-aa_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-af-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-af_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-am-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-am_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-an-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-an_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ar-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ar_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-as-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-as_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ast-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ast_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-az-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-az_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-be-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-be_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-bem-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-bem_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ber-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ber_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-bg-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-bg_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-bho-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-bho_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-bn-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-bn_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-bo-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-bo_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-br-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-br_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-bs-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-bs_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ca-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ca_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-crh-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-crh_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-cs-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-cs_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-csb-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-csb_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-cv-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-cv_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-cy-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-cy_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-da-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-da_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-de-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-de_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-dv-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-dv_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-dz-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-dz_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-el-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-el_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-en-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-en_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-eo-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-eo_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-es-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-es_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-et-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-et_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-eu-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-eu_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fa-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fa_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ff-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ff_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fi-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fi_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fil-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fil_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fo-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fo_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fr-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fr_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fur-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fur_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fy-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-fy_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ga-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ga_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gd-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gd_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gl-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gl_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-aa-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-aa_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-af-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-af_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-am-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-am_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-an-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-an_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ar-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ar_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-as-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-as_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ast-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ast_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-az-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-az_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-be-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-be_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-bem-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-bem_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ber-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ber_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-bg-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-bg_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-bho-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-bho_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-bn-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-bn_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-bo-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-bo_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-br-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-br_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-bs-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-bs_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ca-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ca_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-crh-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-crh_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-cs-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-cs_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-csb-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-csb_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-cv-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-cv_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-cy-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-cy_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-da-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-da_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-de-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-de_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-dv-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-dv_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-dz-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-dz_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-el-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-el_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-en-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-en_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-eo-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-eo_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-es-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-es_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-et-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-et_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-eu-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-eu_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fa-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fa_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ff-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ff_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fi-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fi_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fil-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fil_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fo-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fo_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fr-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fr_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fur-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fur_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fy-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-fy_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ga-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ga_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-gd-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-gd_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-gl-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-gl_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-gu-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-gu_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-gv-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-gv_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ha-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ha_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-he-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-he_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-hi-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-hi_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-hr-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-hr_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ht-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ht_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-hu-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-hu_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-hy-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-hy_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ia-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ia_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-id-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-id_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ig-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ig_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-is-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-is_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-it-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-it_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ja-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ja_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ka-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ka_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-kk-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-kk_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-kl-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-kl_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-km-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-km_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-kn-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-kn_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ko-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ko_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ks-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ks_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ku-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ku_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-kw-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-kw_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ky-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ky_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-lb-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-lb_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-lg-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-lg_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-li-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-li_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-lo-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-lo_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-lt-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-lt_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-lv-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-lv_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mai-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mai_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mg-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mg_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mhr-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mhr_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mi-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mi_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mk-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mk_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ml-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ml_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mn-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mn_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mr-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mr_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ms-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ms_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mt-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-mt_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-my-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-my_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-nan-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-nan_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-nb-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-nb_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-nds-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-nds_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ne-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ne_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-nl-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-nl_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-nn-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-nn_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-nso-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-nso_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-oc-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-oc_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-om-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-om_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-or-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-or_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-os-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-os_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-pa-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-pa_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-pap-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-pap_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-pl-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-pl_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ps-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ps_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-pt-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-pt_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ro-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ro_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ru-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ru_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-rw-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-rw_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sa-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sa_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sc-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sc_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sd-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sd_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-se-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-se_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-shs-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-shs_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-si-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-si_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sk-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sk_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sl-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sl_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sq-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sq_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sr-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sr_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-st-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-st_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sv-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sv_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sw-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-sw_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ta-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ta_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-te-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-te_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-tg-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-tg_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-th-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-th_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ti-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ti_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-tk-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-tk_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-tl-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-tl_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-tr-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-tr_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ts-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ts_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-tt-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-tt_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ug-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ug_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-uk-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-uk_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ur-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ur_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-uz-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-uz_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ve-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-ve_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-vi-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-vi_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-wa-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-wa_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-wae-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-wae_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-wo-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-wo_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-xh-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-xh_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-yi-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-yi_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-yo-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-yo_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-zh-hans-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-zh-hans_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-zh-hant-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-zh-hant_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-zu-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gnome-zu_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gu-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gu_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gv-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-gv_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ha-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ha_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-he-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-he_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-hi-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-hi_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-hr-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-hr_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ht-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ht_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-hu-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-hu_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-hy-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-hy_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ia-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ia_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-id-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-id_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ig-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ig_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-is-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-is_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-it-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-it_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ja-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ja_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ka-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ka_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-kk-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-kk_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-kl-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-kl_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-km-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-km_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-kn-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-kn_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ko-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ko_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ks-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ks_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ku-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ku_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-kw-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-kw_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ky-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ky_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-lb-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-lb_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-lg-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-lg_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-li-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-li_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-lo-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-lo_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-lt-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-lt_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-lv-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-lv_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mai-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mai_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mg-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mg_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mhr-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mhr_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mi-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mi_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mk-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mk_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ml-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ml_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mn-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mn_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mr-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mr_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ms-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ms_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mt-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-mt_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-my-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-my_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-nan-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-nan_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-nb-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-nb_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-nds-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-nds_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ne-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ne_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-nl-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-nl_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-nn-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-nn_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-nso-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-nso_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-oc-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-oc_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-om-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-om_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-or-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-or_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-os-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-os_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-pa-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-pa_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-pap-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-pap_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-pl-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-pl_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ps-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ps_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-pt-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-pt_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ro-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ro_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ru-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ru_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-rw-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-rw_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sa-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sa_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sc-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sc_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sd-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sd_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-se-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-se_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-shs-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-shs_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-si-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-si_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sk-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sk_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sl-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sl_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sq-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sq_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sr-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sr_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-st-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-st_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sv-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sv_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sw-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-sw_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ta-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ta_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-te-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-te_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-tg-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-tg_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-th-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-th_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ti-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ti_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-tk-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-tk_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-tl-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-tl_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-tr-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-tr_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ts-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ts_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-tt-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-tt_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ug-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ug_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-uk-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-uk_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ur-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ur_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-uz-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-uz_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ve-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-ve_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-vi-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-vi_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-wa-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-wa_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-wae-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-wae_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-wo-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-wo_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-xh-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-xh_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-yi-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-yi_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-yo-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-yo_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-zh-hans-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-zh-hans_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-zh-hant-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-zh-hant_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-zu-base_14.04+20140410.tar.gz
+tar xvf $CWD/language-pack-zu_14.04+20140410.tar.gz
+
+chown -R root:root .
+#find -L . ( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 ) -exec chmod 755 {} ; -o ( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 ) -exec chmod 644 {} ;
+
+# Ubuntu Desktop -> Slackware Linux Desktop
+unity=($(find . -name unity.po))
+sed -i '/msgid "Ubuntu Desktop"/ {n;s/Ubuntu/Slackware Linux/}' ${unity[@]}
+sed -i 's/Ubuntu Desktop/Slackware Linux Desktop/g' ${unity[@]}
+
+translations=(
+  gnome-screensaver
+  indicator-appmenu
+  indicator-bluetooth
+  indicator-datetime
+  indicator-keyboard
+  indicator-messages
+  indicator-power
+  indicator-printers
+  indicator-session
+  indicator-sound
+  metacity
+  nautilus
+  nm-applet
+  telepathy-indicator
+  unity
+  unity-control-center
+  unity-greeter
+  unity-lens-applications
+  unity-lens-files
+  unity-lens-music
+  unity-lens-photos
+  unity-lens-video
+  unity-scope-home
+  unity-settings-daemon
+)
+
+for i in ${translations[@]}; do
+files=($(find . -name "${i}.po"))
+for src in ${files[@]}; do
+lang=$(cut -d/ -f 4 <<< ${src})
+dir="$PKG/usr/share/locale/${lang}/LC_MESSAGES"
+target="${dir}/$(basename ${src} | sed 's/.po$/.mo/')"
+install -dm755 "${dir}"
+msgfmt "${src}" -o "${target}"
+done
+done
+
+find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+# cp -a # <documentation> # $PKG/usr/doc/$PRGNAM-$VERSION
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+#cat $CWD/setup.$PKGNAM > $PKG/var/log/setup/setup.$PKGNAM
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

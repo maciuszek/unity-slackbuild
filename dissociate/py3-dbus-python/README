@@ -1,0 +1,7 @@
+DBUS-Python is a bundle of python bindings for the D-Bus messagebus.
+
+
+This overries files from the slackware dbus-python package with
+with identical files, harmless when both are expected to be 
+persisting on the system, if one is removed it will of course corrupt 
+the other so this must be taken into account.

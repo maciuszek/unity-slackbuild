@@ -1,0 +1,185 @@
+#!/bin/sh
+
+# Slackware build script for compiz
+
+# Copyright 2014 Matthew Kuzminski Toronto, ON
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+PRGNAM=compiz # replace with name of program
+VERSION=${VERSION:-0.9.11.14.04.20140423} # replace with version of program
+BUILD=${BUILD:-1}
+TAG=${TAG:-_uSB}
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+case "$( uname -m )" in
+i?86) ARCH=i486 ;;
+arm*) ARCH=arm ;;
+# Unless $ARCH is already set, use uname -m for all other archs:
+*) ARCH=$( uname -m ) ;;
+esac
+fi
+
+CWD=$(pwd)
+TMP=${TMP:-/tmp/build}
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp} # Drop the package in /tmp
+
+if [ "$ARCH" = "i486" ]; then
+SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+SLKCFLAGS="-O2 -fPIC"
+LIBDIRSUFFIX="64"
+else
+SLKCFLAGS="-O2"
+LIBDIRSUFFIX=""
+fi
+
+set -e # Exit on most errors
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf compiz-0.9.11+14.04.20140423
+tar xvf $CWD/compiz_0.9.11+14.04.20140423.orig.tar.gz
+cd compiz-0.9.11+14.04.20140423
+chown -R root:root .
+#find -L . ( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 ) -exec chmod 755 {} ; -o ( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 ) -exec chmod 644 {} ;
+
+# Fix the directory for FindCompiz.cmake and FindCompizConfig.cmake
+patch -p1 -i "$CWD/0002_Fix_cmake_install_dir.patch"
+
+# Compiz's build system appends --install-layout=deb to the python 2 install
+# command (for python-compizconfig and ccsm) whether or not COMPIZ_DEB_BUILD
+# is set to 1
+patch -p1 -i "$CWD/0003_Fix_python_install_command.patch"
+
+# Use python 2
+patch -p1 -i "$CWD/0004_Use_python2.patch"
+
+# Don't treat warnings as errors
+patch -p1 -i "$CWD/0005_Disable_Werror.patch"
+
+# Apply Ubuntu patches
+zcat "$CWD/compiz_0.9.11+14.04.20140423-0ubuntu1.diff.gz" | patch -p1
+
+for i in $(grep -v '#' debian/patches/series); do
+patch -p1 -i "debian/patches/${i}"
+done
+
+# Disable '-Bsymbolic-functions' if present so libcompiz_core won't be
+# loaded once per plugin
+export LDFLAGS="$(echo ${LDFLAGS} | sed 's/-B[ ]*symbolic-functions//')"
+
+# Disable rpath in Python 2 bindings
+export COMPIZ_DISABLE_RPATH=1
+
+# Compiz will segfault if the CMake built target is set to 'Release'
+# Disable tests since they can't run on a headless build server
+
+[[ -d build ]] && rm -rvf build
+mkdir build
+cd build
+
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCOMPIZ_BUILD_WITH_RPATH=FALSE -DCMAKE_BUILD_TYPE=Debug -DCOMPIZ_PACKAGING_ENABLED=TRUE -DUSE_GSETTINGS=ON -DUSE_GCONF=OFF -DCOMPIZ_DISABLE_GS_SCHEMAS_INSTALL=OFF -DCOMPIZ_BUILD_TESTING=OFF -DCOMPIZ_DISABLE_PLUGIN_KDE=ON -DUSE_KDE4=OFF -DPYTHON_INCLUDE_DIR=/usr/include/python2.7 -DPYTHON_LIBRARY=/usr/lib/libpython2.7.so
+#  -DCMAKE_BUILD_TYPE=RelWithDebInfo
+
+make
+
+make install DESTDIR="$PKG"
+
+# Stupid findcompiz_install needs COMPIZ_DESTDIR and install needs DESTDIR
+#make findcompiz_install
+CMAKE_DIR=$(cmake --system-information | grep '^CMAKE_ROOT' | awk -F\" '{print $2}')
+install -dm755 "$PKG${CMAKE_DIR}/Modules/"
+install -m644 ../cmake/FindCompiz.cmake "$PKG${CMAKE_DIR}/Modules/"
+
+# Install documentation
+install -dm755 "$PKG/usr/share/doc/compiz/"
+install ../{AUTHORS,NEWS,README} "$PKG/usr/share/doc/compiz/"
+
+# Install Ubuntu's files
+install -dm755 "$PKG/usr/share/man/man1/"
+install -dm755 "$PKG/etc/X11/xinit/xinitrc.d/"
+install -dm755 "$PKG/etc/compizconfig/upgrades/"
+install -dm755 "$PKG/usr/share/gnome/wm-properties/"
+
+# Install manual pages
+install -m644 ../debian/{ccsm,compiz,gtk-window-decorator}.1 "$PKG/usr/share/man/man1"
+
+# Window manager desktop file for GNOME
+install -m644 "$PKG/usr/share/applications/compiz.desktop" "$PKG/usr/share/gnome/wm-properties/"
+
+# Install X11 startup script
+install -m755 ../debian/65compiz_profile-on-session "$PKG/etc/X11/xinit/xinitrc.d/"
+
+# Unity Compiz profile configuration file
+install -m644 ../debian/unity.ini "$PKG/etc/compizconfig/"
+
+# Install Compiz profile configuration file
+install -m644 ../debian/config "$PKG/etc/compizconfig/"
+
+# Compiz profile upgrade helper files for ensuring smooth upgrades from older
+# configuration files
+pushd ../debian/profile_upgrades/
+find . -type f -name '*.upgrade' -exec install -m644 {} "$PKG"/etc/compizconfig/upgrades/{} \;
+popd
+
+install -dm755 "$PKG/usr/lib/compiz/migration/"
+pushd ../postinst/convert-files/
+find . -type f -name '*.convert' -exec install -m644 {} "$PKG"/usr/lib/compiz/migration/{} \;
+popd
+
+# Install keybinding files
+install -dm755 "$PKG/usr/share/gnome-control-center/keybindings/"
+install -dm755 "$PKG/usr/share/unity-control-center/keybindings/"
+find ../*/gtk/gnome/ -name *.xml -exec install {} "$PKG/usr/share/gnome-control-center/keybindings/" \;
+find ../*/gtk/gnome/ -name *.xml -exec install {} "$PKG/usr/share/unity-control-center/keybindings/" \;
+
+# Default GSettings settings
+install -m644 ../debian/compiz-gnome.gsettings-override "$PKG/usr/share/glib-2.0/schemas/10_compiz.gschema.override"
+
+# Install script for resetting all of Compiz's settings
+install "$CWD/compiz.reset" "$PKG/usr/bin/compiz.reset"
+
+# Remove GConf schemas
+rm -rv "$PKG/usr/share/gconf/"
+
+# Don't disable gnomecompat plugin
+rm "$PKG/etc/compizconfig/upgrades/com.canonical.unity.unity.07.upgrade"
+sed -ri '/s0_active_plugins/s/$/;gnomecompat/g' "$PKG/etc/compizconfig/unity.ini"
+
+find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+# cp -a # <documentation> # $PKG/usr/doc/$PRGNAM-$VERSION
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+#cat $CWD/setup.$PKGNAM > $PKG/var/log/setup/setup.$PKGNAM
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

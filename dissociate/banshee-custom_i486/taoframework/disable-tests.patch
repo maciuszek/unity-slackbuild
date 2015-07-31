@@ -1,0 +1,10 @@
+--- source/Makefile.am	2008-05-01 12:46:16.000000000 -0600
++++ source/Makefile.am	2009-01-23 11:31:34.000000000 -0700
+@@ -1,6 +1,6 @@
+ 
+ AUTOMAKE_OPTIONS = dist-bzip2
+-SUBDIRS = src tests examples
++SUBDIRS = src
+ DIST_SUBDIRS = $(SUBDIRS) m4
+ 
+ ACLOCAL_AMFLAGS = -I m4

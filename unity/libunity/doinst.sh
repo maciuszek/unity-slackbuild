@@ -1,0 +1,6 @@
+glib-compile-schemas /usr/share/glib-2.0/schemas
+update-desktop-database -q
+
+printf "\n*****************\n*** ATTENTION ***\n*****************\n\nThis Unity compilation comes 
+with the online search disabled by default to PROTECT YOUR PRIVACY\nTo enable it, just 
+run:\n\n\tgsettings set com.canonical.Unity.Lenses remote-content-search all\n\n"

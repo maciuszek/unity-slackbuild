@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|' on
+# the right side marks the last column you can put a character in.  You must make
+# exactly 11 lines for the formatting to be correct.  It's also customary to
+# leave one space after the ':'.
+
+               |-----handy-ruler------------------------------------------------------|
+gtk-sharp-beans: GTK-Sharp-Beans (GTK Sharp Integration Library)
+gtk-sharp-beans:
+gtk-sharp-beans: Gtk Sharp Beans aims to fill the gap between the current Gtk
+gtk-sharp-beans: sharp  packages   state  and  all  the  blings  and  desktop
+gtk-sharp-beans: integration stuffs.
+gtk-sharp-beans:
+gtk-sharp-beans:
+gtk-sharp-beans:
+gtk-sharp-beans:
+gtk-sharp-beans:
+gtk-sharp-beans:

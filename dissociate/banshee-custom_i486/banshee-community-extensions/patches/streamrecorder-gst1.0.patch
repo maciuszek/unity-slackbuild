@@ -1,0 +1,1787 @@
+From 12d916ba48557c51e7d4b8381234d11dbfcb93e8 Mon Sep 17 00:00:00 2001
+From: Frank Ziegler <funtastix@googlemail.com>
+Date: Mon, 24 Feb 2014 23:29:51 +1100
+Subject: [PATCH] [Streamrecorder] Migrated to GStreamer 1.0
+
+---
+ po/banshee-community-extensions.pot                |  20 ++--
+ .../Banshee.Streamrecorder/Gst/Bin.cs              |  24 +++--
+ .../Banshee.Streamrecorder/Gst/Bus.cs              |  16 +--
+ .../Banshee.Streamrecorder/Gst/BusFunc.cs          |   4 +-
+ .../Banshee.Streamrecorder/Gst/Element.cs          |  31 ++++--
+ .../Banshee.Streamrecorder/Gst/ElementFactory.cs   |  22 ++--
+ .../Banshee.Streamrecorder/Gst/Format.cs           |   1 -
+ .../Banshee.Streamrecorder/Gst/GhostPad.cs         |  10 +-
+ .../Banshee.Streamrecorder/Gst/GstObject.cs        |  79 +++++++-------
+ .../Banshee.Streamrecorder/Gst/Iterator.cs         |  17 ++--
+ .../Banshee.Streamrecorder/Gst/Marshaller.cs       |  33 +++---
+ .../Banshee.Streamrecorder/Gst/Pad.cs              |  39 +++++--
+ .../Banshee.Streamrecorder/Gst/PadBlockCallback.cs |   4 +-
+ .../Banshee.Streamrecorder/Gst/PadProbeCallback.cs | 113 +++++++++++++++++++++
+ .../Banshee.Streamrecorder/Gst/PadProbeInfo.cs     |  55 ++++++++++
+ .../Banshee.Streamrecorder/Gst/PadProbeReturn.cs   |  40 ++++++++
+ .../Banshee.Streamrecorder/Gst/PadProbeType.cs     |  63 ++++++++++++
+ .../Banshee.Streamrecorder/Gst/Parse.cs            |  18 ++--
+ .../Banshee.Streamrecorder/Gst/Pipeline.cs         |   2 +-
+ .../Banshee.Streamrecorder/Gst/State.cs            |   1 -
+ .../Gst/StateChangeReturn.cs                       |   1 -
+ .../Banshee.Streamrecorder/Gst/TagList.cs          |  14 +--
+ .../Banshee.Streamrecorder/Gst/TagMergeMode.cs     |   1 -
+ .../Banshee.Streamrecorder/Gst/TagSetter.cs        |  10 +-
+ .../Banshee.Streamrecorder/PlayerAudioTee.cs       |  70 +++++++++----
+ .../Banshee.Streamrecorder/Recorder.cs             |  76 ++++++++++----
+ src/StreamRecorder/Makefile.am                     |   9 +-
+ src/StreamRecorder/Streamrecorder.csproj           |  43 +++++---
+ 28 files changed, 621 insertions(+), 195 deletions(-)
+ create mode 100644 src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeCallback.cs
+ create mode 100644 src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeInfo.cs
+ create mode 100644 src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeReturn.cs
+ create mode 100644 src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeType.cs
+
+diff --git a/po/banshee-community-extensions.pot b/po/banshee-community-extensions.pot
+index e466fdf..308c1a5 100644
+--- a/po/banshee-community-extensions.pot
++++ b/po/banshee-community-extensions.pot
+@@ -8,7 +8,7 @@ msgid ""
+ msgstr ""
+ "Project-Id-Version: PACKAGE VERSION\n"
+ "Report-Msgid-Bugs-To: \n"
+-"POT-Creation-Date: 2013-02-17 15:05-0500\n"
++"POT-Creation-Date: 2013-11-10 17:02+1100\n"
+ "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+ "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+ "Language-Team: LANGUAGE <LL@li.org>\n"
+@@ -552,12 +552,12 @@ msgid "Restore _defaults"
+ msgstr ""
+ 
+ #: ../src/Karaoke/Banshee.Karaoke/KaraokeConfigDialog.cs:127
+-#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:102
++#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:103
+ msgid "_Cancel"
+ msgstr ""
+ 
+ #: ../src/Karaoke/Banshee.Karaoke/KaraokeConfigDialog.cs:129
+-#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:104
++#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:105
+ msgid "_Save"
+ msgstr ""
+ 
+@@ -1172,36 +1172,36 @@ msgstr ""
+ msgid "Play songs from your Top Artists (via Lastfm)"
+ msgstr ""
+ 
+-#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:88
++#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:89
+ #, csharp-format
+ msgid ""
+ "{0}Streamrecorder configuration\n"
+ "{1}"
+ msgstr ""
+ 
+-#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:93
++#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:94
+ msgid ""
+ "Please select output folder for ripped files and if ripped\n"
+ "files should be imported to media library.\n"
+ msgstr ""
+ 
+-#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:96
++#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:97
+ msgid "Output folder:"
+ msgstr ""
+ 
+-#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:97
++#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:98
+ msgid "Encoder:"
+ msgstr ""
+ 
+-#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:99
++#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:100
+ msgid "_Browse"
+ msgstr ""
+ 
+-#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:106
++#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:107
+ msgid "Import files to media library"
+ msgstr ""
+ 
+-#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:108
++#: ../src/StreamRecorder/Banshee.Streamrecorder/StreamrecorderConfigDialog.cs:109
+ msgid "Enable automatic files splitting by Metadata"
+ msgstr ""
+ 
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Bin.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Bin.cs
+index 1809938..e135b98 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Bin.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Bin.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using System.Runtime.InteropServices;
+@@ -36,7 +38,7 @@ namespace Banshee.Streamrecorder.Gst
+     public class Bin : Element
+     {
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         private static extern IntPtr gst_bin_new (IntPtr name);
+ 
+         public Bin () : base(gst_bin_new (IntPtr.Zero))
+@@ -47,13 +49,13 @@ public Bin (IntPtr bin) : base(bin)
+         {
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         private static extern IntPtr gst_bin_iterate_sorted (IntPtr bin);
+ 
+         public override string ToString ()
+         {
+             IntPtr raw_ret = gst_bin_iterate_sorted (raw);
+-            Iterator ret = raw_ret == IntPtr.Zero ? null : (Iterator) GLib.Opaque.GetOpaque (raw_ret, typeof (Iterator), false);
++            Iterator ret = raw_ret == IntPtr.Zero ? null : (Iterator) OldGLib.Opaque.GetOpaque (raw_ret, typeof (Iterator), false);
+             IEnumerator e = ret.GetEnumerator ();
+             if (e == null) return "null";
+             StringBuilder res = new StringBuilder ();
+@@ -73,26 +75,26 @@ public override string ToString ()
+ 
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
+-        private static extern IntPtr gst_bin_get_by_interface (IntPtr bin, GLib.GType iface);
++        [DllImport("libgstreamer-1.0.so.0")]
++        private static extern IntPtr gst_bin_get_by_interface (IntPtr bin, OldGLib.GType iface);
+ 
+-        public IntPtr GetByInterface (GLib.GType iface)
++        public IntPtr GetByInterface (OldGLib.GType iface)
+         {
+             return gst_bin_get_by_interface (raw, iface);
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         private static extern IntPtr gst_bin_get_by_name (IntPtr bin, IntPtr name);
+ 
+         public Element GetByName (string name)
+         {
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
+             IntPtr raw_ret = gst_bin_get_by_name (raw, native_name);
+-            GLib.Marshaller.Free (native_name);
++            OldGLib.Marshaller.Free (native_name);
+             return new Element (raw_ret);
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         static extern bool gst_bin_add (IntPtr bin, IntPtr element);
+ 
+         public bool Add (Element element)
+@@ -107,7 +109,7 @@ public void AddMany (Element[] elements)
+             }
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         static extern bool gst_bin_remove (IntPtr bin, IntPtr element);
+ 
+         public bool Remove (Element element)
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Bus.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Bus.cs
+index 3f20aca..bab0991 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Bus.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Bus.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using System.Runtime.InteropServices;
+@@ -39,7 +41,7 @@ public Bus (IntPtr bus) : base(bus)
+         {
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         public static extern IntPtr gst_bus_pop (IntPtr bus);
+ 
+         protected IntPtr Pop ()
+@@ -47,19 +49,19 @@ protected IntPtr Pop ()
+             return gst_bus_pop (raw);
+         }
+ 
+-        public GLib.Value PopMessageStructure (string name)
++        public OldGLib.Value PopMessageStructure (string name)
+         {
+             IntPtr structure = Gst.Marshaller.gst_message_get_structure (Pop ());
+             if (structure == IntPtr.Zero) {
+-                return new GLib.Value (IntPtr.Zero);
++                return new OldGLib.Value (IntPtr.Zero);
+             }
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
+-            GLib.Value val = Gst.Marshaller.gst_structure_get_value (structure, native_name);
+-            GLib.Marshaller.Free (native_name);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
++            OldGLib.Value val = Gst.Marshaller.gst_structure_get_value (structure, native_name);
++            OldGLib.Marshaller.Free (native_name);
+             return val;
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe public static extern void gst_bus_add_signal_watch (IntPtr bus);
+ 
+         public void AddSignalWatch ()
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/BusFunc.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/BusFunc.cs
+index d102837..e48c6af 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/BusFunc.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/BusFunc.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using System.Runtime.InteropServices;
+@@ -73,7 +75,7 @@ public bool NativeCallback (IntPtr bus, IntPtr message, IntPtr user_data)
+                     gch.Free ();
+                 return __ret;
+             } catch (Exception e) {
+-                GLib.ExceptionManager.RaiseUnhandledException (e, false);
++                OldGLib.ExceptionManager.RaiseUnhandledException (e, false);
+                 return false;
+             }
+         }
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Element.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Element.cs
+index 594141c..1deb209 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Element.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Element.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using System.Runtime.InteropServices;
+@@ -39,7 +41,7 @@ public Element (IntPtr element) : base(element)
+         {
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         static extern bool gst_element_remove_pad (IntPtr element, IntPtr pad);
+ 
+         public bool RemovePad (Pad pad)
+@@ -48,18 +50,18 @@ public bool RemovePad (Pad pad)
+             return ret;
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         static extern IntPtr gst_element_get_static_pad (IntPtr element, IntPtr name);
+ 
+         public Pad GetStaticPad (string name)
+         {
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
+             Pad ret = new Pad (gst_element_get_static_pad (raw, native_name));
+-            GLib.Marshaller.Free (native_name);
++            OldGLib.Marshaller.Free (native_name);
+             return ret;
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         static extern bool gst_element_add_pad (IntPtr element, IntPtr pad);
+ 
+         public bool AddPad (Pad pad)
+@@ -67,7 +69,7 @@ public bool AddPad (Pad pad)
+             return gst_element_add_pad (raw, pad.ToIntPtr ());
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0", CallingConvention = CallingConvention.Cdecl)]
++        [DllImport("libgstreamer-1.0.so.0", CallingConvention = CallingConvention.Cdecl)]
+         static extern bool gst_element_link (IntPtr src, IntPtr dest);
+ 
+         public bool Link (Element dest)
+@@ -86,7 +88,7 @@ public void LinkMany (Element[] elements)
+             }
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0", CallingConvention = CallingConvention.Cdecl)]
++        [DllImport("libgstreamer-1.0.so.0", CallingConvention = CallingConvention.Cdecl)]
+         static extern void gst_element_unlink (IntPtr src, IntPtr dest);
+ 
+         public void Unlink (Element dest)
+@@ -94,7 +96,7 @@ public void Unlink (Element dest)
+             gst_element_unlink (raw, dest.ToIntPtr ());
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         static extern int gst_element_set_state (IntPtr element, int state);
+ 
+         public StateChangeReturn SetState (State state)
+@@ -104,7 +106,18 @@ public StateChangeReturn SetState (State state)
+             return ret;
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
++        static extern int gst_element_get_state (IntPtr element, IntPtr state, IntPtr pending_state, UInt64 clocktime);
++
++        public StateChangeReturn GetState ()
++        {
++            //18446744073709551615 is infinite
++            int raw_ret = gst_element_get_state (raw, IntPtr.Zero, IntPtr.Zero, 100);
++            StateChangeReturn ret = (StateChangeReturn)raw_ret;
++            return ret;
++        }
++
++        [DllImport("libgstreamer-1.0.so.0")]
+         static extern bool gst_element_send_event (IntPtr element, IntPtr gstevent);
+ 
+         public bool SendEvent (IntPtr gstevent)
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/ElementFactory.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/ElementFactory.cs
+index d84f86a..8b9bbb4 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/ElementFactory.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/ElementFactory.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using System.Runtime.InteropServices;
+@@ -40,35 +42,35 @@ public ElementFactory (IntPtr elementfactory) : base(elementfactory)
+         {
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern IntPtr gst_element_factory_make (IntPtr factoryname, IntPtr name);
+ 
+         public static Element Make (string factoryname)
+         {
+-            IntPtr native_factoryname = GLib.Marshaller.StringToPtrGStrdup (factoryname);
++            IntPtr native_factoryname = OldGLib.Marshaller.StringToPtrGStrdup (factoryname);
+             IntPtr raw_ret = gst_element_factory_make (native_factoryname, IntPtr.Zero);
+-            GLib.Marshaller.Free (native_factoryname);
++            OldGLib.Marshaller.Free (native_factoryname);
+             return new Element (raw_ret);
+         }
+ 
+         public static Element Make (string factoryname, string name)
+         {
+-            IntPtr native_factoryname = GLib.Marshaller.StringToPtrGStrdup (factoryname);
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
++            IntPtr native_factoryname = OldGLib.Marshaller.StringToPtrGStrdup (factoryname);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
+             IntPtr raw_ret = gst_element_factory_make (native_factoryname, native_name);
+-            GLib.Marshaller.Free (native_factoryname);
+-            GLib.Marshaller.Free (native_name);
++            OldGLib.Marshaller.Free (native_factoryname);
++            OldGLib.Marshaller.Free (native_name);
+             return new Element (raw_ret);
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern IntPtr gst_element_factory_find (IntPtr name);
+ 
+         public static ElementFactory Find (string name)
+         {
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
+             ElementFactory element_factory = new ElementFactory (gst_element_factory_find (native_name));
+-            GLib.Marshaller.Free (native_name);
++            OldGLib.Marshaller.Free (native_name);
+             return element_factory;
+         }
+ 
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Format.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Format.cs
+index 93cd5b7..01b1971 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Format.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Format.cs
+@@ -33,7 +33,6 @@ namespace Banshee.Streamrecorder.Gst
+ 
+     public enum Format
+     {
+-
+         Undefined,
+         Default = 1,
+         Bytes = 2,
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/GhostPad.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/GhostPad.cs
+index d65c3f8..d422343 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/GhostPad.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/GhostPad.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using System.Runtime.InteropServices;
+@@ -39,17 +41,17 @@ public GhostPad (IntPtr ghostpad) : base(ghostpad)
+         {
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern IntPtr gst_ghost_pad_new (IntPtr name, IntPtr target);
+ 
+         public GhostPad (string name, Pad target) : base(IntPtr.Zero)
+         {
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
+             this.raw = gst_ghost_pad_new (native_name, target.ToIntPtr ());
+-            GLib.Marshaller.Free (native_name);
++            OldGLib.Marshaller.Free (native_name);
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern bool gst_ghost_pad_set_target (IntPtr element, IntPtr target);
+ 
+         public bool SetTarget (Pad target)
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/GstObject.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/GstObject.cs
+index c2569bb..e3433dd 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/GstObject.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/GstObject.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using System.Runtime.InteropServices;
+@@ -48,86 +50,85 @@ public bool IsNull ()
+         }
+ 
+         [DllImport ("libgobject-2.0.so.0")]
+-        private static extern void g_object_get_property (IntPtr gobject, IntPtr property_name, ref GLib.Value value);
++        private static extern void g_object_get_property (IntPtr gobject, IntPtr property_name, ref OldGLib.Value value);
+ 
+         public IntPtr GetProperty (string name)
+         {
+-            GLib.Value val = new GLib.Value ();
+-            val.Init (GLib.GType.Object);
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
++            OldGLib.Value val = new OldGLib.Value ();
++            val.Init (OldGLib.GType.Object);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
+             g_object_get_property (raw, native_name, ref val);
+-            GLib.Marshaller.Free (native_name);
+-            return ((GLib.Object)(val.Val)).Handle;
++            OldGLib.Marshaller.Free (native_name);
++            return ((OldGLib.Object)(val.Val)).Handle;
+         }
+ 
+         public string GetStringProperty (string name)
+         {
+-            GLib.Value val = new GLib.Value ();
+-            val.Init (GLib.GType.String);
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
++            OldGLib.Value val = new OldGLib.Value ();
++            val.Init (OldGLib.GType.String);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
+             g_object_get_property (raw, native_name, ref val);
+-            GLib.Marshaller.Free (native_name);
++            OldGLib.Marshaller.Free (native_name);
+             return val.Val as string;
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern void gst_util_set_object_arg (IntPtr gstobject, IntPtr name, IntPtr value);
+ 
+         public void SetProperty (string name, string value)
+         {
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
+-            IntPtr native_value = GLib.Marshaller.StringToPtrGStrdup (value);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
++            IntPtr native_value = OldGLib.Marshaller.StringToPtrGStrdup (value);
+             gst_util_set_object_arg (raw, native_name, native_value);
+-            GLib.Marshaller.Free (native_name);
+-            GLib.Marshaller.Free (native_value);
++            OldGLib.Marshaller.Free (native_name);
++            OldGLib.Marshaller.Free (native_value);
+         }
+ 
+         [DllImport("libgobject-2.0.so.0")]
+-        private static extern void g_object_set_property (IntPtr gobject, IntPtr property_name, ref GLib.Value value);
++        private static extern void g_object_set_property (IntPtr gobject, IntPtr property_name, ref OldGLib.Value value);
+ 
+         public void SetProperty (string name, Element value)
+         {
+-            GLib.Value val = new GLib.Value (GLib.GType.Object);
+-            val.Val = GLib.Object.GetObject (value.ToIntPtr ());
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
++            OldGLib.Value val = new OldGLib.Value (OldGLib.GType.Object);
++            val.Val = OldGLib.Object.GetObject (value.ToIntPtr ());
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
+             g_object_set_property (raw, native_name, ref val);
+-            GLib.Marshaller.Free (native_name);
++            OldGLib.Marshaller.Free (native_name);
+         }
+ 
+         public void SetStringProperty (string name, string value)
+         {
+-            GLib.Value val = new GLib.Value (GLib.GType.String);
+-            val.Val = value;
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
++            OldGLib.Value val = new OldGLib.Value (value);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
+             g_object_set_property (raw, native_name, ref val);
+-            GLib.Marshaller.Free (native_name);
++            OldGLib.Marshaller.Free (native_name);
+         }
+ 
+         public void SetBooleanProperty (string name, bool value)
+         {
+-            GLib.Value val = new GLib.Value (GLib.GType.Boolean);
++            OldGLib.Value val = new OldGLib.Value (OldGLib.GType.Boolean);
+             val.Val = value;
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
+             g_object_set_property (raw, native_name, ref val);
+-            GLib.Marshaller.Free (native_name);
++            OldGLib.Marshaller.Free (native_name);
+         }
+ 
+         public void SetIntegerProperty (string name, int value)
+         {
+-            GLib.Value val = new GLib.Value (GLib.GType.Int);
++            OldGLib.Value val = new OldGLib.Value (OldGLib.GType.Int);
+             val.Val = value;
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
+             g_object_set_property (raw, native_name, ref val);
+-            GLib.Marshaller.Free (native_name);
++            OldGLib.Marshaller.Free (native_name);
+         }
+ 
+         public void SetFloatProperty (string name, float value)
+         {
+-            GLib.Value val = new GLib.Value (GLib.GType.Float);
++            OldGLib.Value val = new OldGLib.Value (OldGLib.GType.Float);
+             val.Val = value;
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
+             g_object_set_property (raw, native_name, ref val);
+-            GLib.Marshaller.Free (native_name);
++            OldGLib.Marshaller.Free (native_name);
+         }
+ 
+         public IntPtr ToIntPtr ()
+@@ -135,18 +136,18 @@ public IntPtr ToIntPtr ()
+             return raw;
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern IntPtr gst_object_get_path_string (IntPtr gstobject);
+ 
+         public string GetPathString ()
+         {
+             IntPtr raw_ret = gst_object_get_path_string (raw);
+-            string ret = GLib.Marshaller.Utf8PtrToString (raw_ret);
+-            GLib.Marshaller.Free (raw_ret);
++            string ret = OldGLib.Marshaller.Utf8PtrToString (raw_ret);
++            OldGLib.Marshaller.Free (raw_ret);
+             return ret;
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern IntPtr gst_object_get_parent (IntPtr gstobject);
+ 
+         public GstObject GetParent ()
+@@ -154,7 +155,7 @@ public GstObject GetParent ()
+             return new GstObject (gst_object_get_parent (raw));
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern void gst_object_unref (IntPtr gstobject);
+ 
+         public void UnRef ()
+@@ -162,7 +163,7 @@ public void UnRef ()
+             gst_object_unref (raw);
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern IntPtr gst_object_ref (IntPtr element);
+ 
+         public void Ref ()
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Iterator.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Iterator.cs
+index bee28c5..dc3cb3e 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Iterator.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Iterator.cs
+@@ -23,24 +23,27 @@
+ // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ // THE SOFTWARE.
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
++
++using System;
++using System.Collections;
++using System.Runtime.InteropServices;
+ 
+ namespace Banshee.Streamrecorder.Gst
+ {
+-    using System;
+-    using System.Collections;
+-    using System.Runtime.InteropServices;
+ 
+-    public partial class Iterator : GLib.Opaque, IEnumerable
++    public partial class Iterator : OldGLib.Opaque, IEnumerable
+     {
+ 
+         public Iterator (IntPtr raw) : base(raw)
+         {
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         static extern int gst_iterator_next (IntPtr iterator, out IntPtr elem);
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         static extern void gst_iterator_resync (IntPtr iterator);
+ 
+         private class Enumerator : IEnumerator
+@@ -111,7 +114,7 @@ public IEnumerator GetEnumerator ()
+             return this.enumerator;
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         static extern void gst_iterator_free (IntPtr iterator);
+ 
+         ~Iterator ()
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Marshaller.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Marshaller.cs
+index 978b789..94da7cd 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Marshaller.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Marshaller.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using System.Runtime.InteropServices;
+@@ -71,10 +73,11 @@ public static bool CheckGstPlugin (string name)
+             return ret;
+         }
+ 
+-        public static IntPtr CreateSegment ()
++        public static IntPtr CreateSegmentEvent ()
+         {
+-            ulong ClockTimeNone = 0xffffffffffffffffuL;
+-            return gst_event_new_new_segment (true, 1.0, Gst.Format.Default, 0, (long)ClockTimeNone, 0);
++            IntPtr segment = gst_segment_new ();
++            gst_segment_init (segment, Gst.Format.Default);
++            return gst_event_new_segment (segment);
+         }
+ 
+         public static void DebugSetActive (bool active)
+@@ -98,28 +101,34 @@ public static void Init ()
+         }
+ 
+         /* Helper Imports*/
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         private static extern string gst_version_string ();
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         private static extern void gst_debug_set_active (bool active);
+ 
+         [DllImport("libgobject-2.0.so.0")]
+         public static extern void g_signal_connect_data (IntPtr instance, IntPtr detailed_signal, BusFunc cb, IntPtr data, IntPtr zero, uint flags);
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
+-        private static extern IntPtr gst_event_new_new_segment (bool update, double rate, Gst.Format format, long start, long stop, long position);
++        [DllImport("libgstreamer-1.0.so.0")]
++        private static extern IntPtr gst_event_new_segment (IntPtr segment);
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
+-        unsafe public static extern GLib.Value gst_structure_get_value (IntPtr structure, IntPtr name);
++        [DllImport("libgstreamer-1.0.so.0")]
++        private static extern IntPtr gst_segment_new ();
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
++        private static extern void gst_segment_init (IntPtr segment, Gst.Format format);
++
++        [DllImport("libgstreamer-1.0.so.0")]
++        unsafe public static extern OldGLib.Value gst_structure_get_value (IntPtr structure, IntPtr name);
++
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe public static extern IntPtr gst_message_get_structure (IntPtr message);
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe public static extern IntPtr gst_event_new_eos ();
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe public static extern void gst_init (IntPtr argc, IntPtr argv);
+ 
+     }
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Pad.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Pad.cs
+index 0eac4f7..a692d64 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Pad.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Pad.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using System.Runtime.InteropServices;
+@@ -39,7 +41,7 @@ public Pad (IntPtr pad) : base(pad)
+         {
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern IntPtr gst_pad_new (IntPtr name, PadDirection direction);
+ 
+         public Pad (PadDirection direction) : this(IntPtr.Zero, direction)
+@@ -48,16 +50,16 @@ public Pad (PadDirection direction) : this(IntPtr.Zero, direction)
+ 
+         public Pad (string name, PadDirection direction) : base(IntPtr.Zero)
+         {
+-            IntPtr native_name = GLib.Marshaller.StringToPtrGStrdup (name);
++            IntPtr native_name = OldGLib.Marshaller.StringToPtrGStrdup (name);
+             raw = gst_pad_new (native_name, direction);
+-            GLib.Marshaller.Free (native_name);
++            OldGLib.Marshaller.Free (native_name);
+         }
+ 
+         protected Pad (IntPtr native_name, PadDirection direction) : this(gst_pad_new (native_name, direction))
+         {
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern IntPtr gst_pad_get_peer (IntPtr element);
+ 
+         public Pad GetPeer ()
+@@ -65,7 +67,7 @@ public Pad GetPeer ()
+             return new Pad (gst_pad_get_peer (raw));
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         private static extern bool gst_pad_send_event (IntPtr pad, IntPtr gevent);
+ 
+         public bool SendEvent (IntPtr segment)
+@@ -73,7 +75,29 @@ public bool SendEvent (IntPtr segment)
+             return gst_pad_send_event (raw, segment);
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0", CallingConvention = CallingConvention.Cdecl)]
++        [DllImport("libgstreamer-1.0.so.0", CallingConvention = CallingConvention.Cdecl)]
++        static extern ulong gst_pad_remove_probe (IntPtr pad, ulong id);
++
++        public void RemoveProbe (ulong id)
++        {
++            Hyena.Log.Debug ("[Streamrecorder.Gst.Pad]<RemoveProbe> START (" + id + ")");
++            gst_pad_remove_probe (raw, id);
++            Hyena.Log.Debug ("[Streamrecorder.Gst.Pad]<RemoveProbe> END");
++        }
++
++        [DllImport("libgstreamer-1.0.so.0", CallingConvention = CallingConvention.Cdecl)]
++        static extern ulong gst_pad_add_probe (IntPtr pad, PadProbeType mask, PadProbeCallbackNative cb, IntPtr user_data, OldGLib.DestroyNotify destroy_data);
++
++        public ulong AddProbe (PadProbeType mask, PadProbeCallback cb, IntPtr user_data, OldGLib.DestroyNotify destroy_data)
++        {
++            Hyena.Log.Debug ("[Streamrecorder.Gst.Pad]<PadAddProbe> START");
++            PadProbeCallbackWrapper cb_wrapper = new PadProbeCallbackWrapper (cb);
++            ulong ret = gst_pad_add_probe (raw, mask, cb_wrapper.NativeDelegate, user_data, destroy_data);
++            Hyena.Log.Debug ("[Streamrecorder.Gst.Pad]<PadAddProbe> END (" + ret + ")");
++            return ret;
++        }
++
++/*        [DllImport("libgstreamer-1.0.so.0", CallingConvention = CallingConvention.Cdecl)]
+         static extern bool gst_pad_set_blocked_async (IntPtr pad, bool blocked, PadBlockCallbackNative cb, IntPtr user_data);
+ 
+         public bool SetBlockedAsync (bool blocked, PadBlockCallback cb, IntPtr user_data)
+@@ -85,13 +109,14 @@ public bool SetBlockedAsync (bool blocked, PadBlockCallback cb, IntPtr user_data
+             return ret;
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         private static extern bool gst_pad_set_blocked (IntPtr pad, bool blocked);
+ 
+         public bool SetBlocked (bool blocked)
+         {
+             return gst_pad_set_blocked (raw, blocked);
+         }
++*/
+ 
+         public GhostPad ToGhostPad ()
+         {
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadBlockCallback.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadBlockCallback.cs
+index 62781da..0e40a12 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadBlockCallback.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadBlockCallback.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using System.Runtime.InteropServices;
+@@ -71,7 +73,7 @@ public void NativeCallback (IntPtr pad, bool blocked, IntPtr user_data)
+                 if (release_on_call)
+                     gch.Free ();
+             } catch (Exception e) {
+-                GLib.ExceptionManager.RaiseUnhandledException (e, false);
++                OldGLib.ExceptionManager.RaiseUnhandledException (e, false);
+             }
+         }
+ 
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeCallback.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeCallback.cs
+new file mode 100644
+index 0000000..32916aa
+--- /dev/null
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeCallback.cs
+@@ -0,0 +1,113 @@
++//
++// Pad.cs
++//
++// Author:
++//   Frank Ziegler
++//
++// Copyright (C) 2009 Frank Ziegler
++//
++// Permission is hereby granted, free of charge, to any person obtaining
++// a copy of this software and associated documentation files (the
++// "Software"), to deal in the Software without restriction, including
++// without limitation the rights to use, copy, modify, merge, publish,
++// distribute, sublicense, and/or sell copies of the Software, and to
++// permit persons to whom the Software is furnished to do so, subject to
++// the following conditions:
++//
++// The above copyright notice and this permission notice shall be
++// included in all copies or substantial portions of the Software.
++//
++// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++//
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
++
++using System;
++using System.Runtime.InteropServices;
++
++namespace Banshee.Streamrecorder.Gst
++{
++
++    public delegate PadProbeReturn PadProbeCallback (IntPtr pad, IntPtr probe_info, IntPtr user_data);
++
++    [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
++    internal delegate PadProbeReturn PadProbeCallbackNative (IntPtr pad, IntPtr probe_info, IntPtr user_data);
++
++    internal class PadProbeCallbackInvoker
++    {
++
++        PadProbeCallbackNative native_cb;
++
++        ~PadProbeCallbackInvoker ()
++        {
++        }
++
++        internal PadProbeCallbackInvoker (PadProbeCallbackNative native_cb)
++        {
++            this.native_cb = native_cb;
++        }
++
++        internal PadProbeCallback Handler {
++            get { return new PadProbeCallback (InvokeNative); }
++        }
++
++        PadProbeReturn InvokeNative (IntPtr pad, IntPtr probe_info, IntPtr user_data)
++        {
++            return native_cb (pad, probe_info, user_data);
++        }
++    }
++
++    internal class PadProbeCallbackWrapper
++    {
++
++        public PadProbeReturn NativeCallback (IntPtr pad, IntPtr probe_info, IntPtr user_data)
++        {
++            try {
++                PadProbeReturn ret;
++                ret = managed (pad, probe_info, user_data);
++                if (release_on_call)
++                    gch.Free ();
++                return ret;
++            } catch (Exception e) {
++                OldGLib.ExceptionManager.RaiseUnhandledException (e, false);
++            }
++            return PadProbeReturn.GST_PAD_PROBE_DROP;
++        }
++
++        bool release_on_call = false;
++        GCHandle gch;
++
++        public void PersistUntilCalled ()
++        {
++            release_on_call = true;
++            gch = GCHandle.Alloc (this);
++        }
++
++        internal PadProbeCallbackNative NativeDelegate;
++        PadProbeCallback managed;
++
++        public PadProbeCallbackWrapper (PadProbeCallback managed)
++        {
++            this.managed = managed;
++            if (managed != null)
++                NativeDelegate = new PadProbeCallbackNative (NativeCallback);
++        }
++
++        public static PadProbeCallback GetManagedDelegate (PadProbeCallbackNative native)
++        {
++            if (native == null)
++                return null;
++            PadProbeCallbackWrapper wrapper = (PadProbeCallbackWrapper)native.Target;
++            if (wrapper == null)
++                return null;
++            return wrapper.managed;
++        }
++
++    }
++}
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeInfo.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeInfo.cs
+new file mode 100644
+index 0000000..e1dc030
+--- /dev/null
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeInfo.cs
+@@ -0,0 +1,55 @@
++//
++// Recorder.cs
++//
++// Author:
++//   Frank Ziegler
++//
++// Copyright (C) 2009 Frank Ziegler
++//
++// Permission is hereby granted, free of charge, to any person obtaining
++// a copy of this software and associated documentation files (the
++// "Software"), to deal in the Software without restriction, including
++// without limitation the rights to use, copy, modify, merge, publish,
++// distribute, sublicense, and/or sell copies of the Software, and to
++// permit persons to whom the Software is furnished to do so, subject to
++// the following conditions:
++//
++// The above copyright notice and this permission notice shall be
++// included in all copies or substantial portions of the Software.
++//
++// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++//
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
++
++using System.Runtime.InteropServices;
++
++using System;
++using System.IO;
++using System.Collections.Generic;
++
++using Banshee.Collection;
++using Banshee.Collection.Database;
++using Banshee.Streamrecorder.Gst;
++using Banshee.ServiceStack;
++using Banshee.MediaEngine;
++
++namespace Banshee.Streamrecorder.Gst
++{
++
++    public struct PadProbeInfo
++    {
++        public PadProbeType type;
++        public ulong id;
++        public IntPtr data;
++        public UInt64 offset;
++        public uint size;
++    }
++
++}
+\ No newline at end of file
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeReturn.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeReturn.cs
+new file mode 100644
+index 0000000..1d6a830
+--- /dev/null
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeReturn.cs
+@@ -0,0 +1,40 @@
++//
++// Pad.cs
++//
++// Author:
++//   Frank Ziegler
++//
++// Copyright (C) 2009 Frank Ziegler
++//
++// Permission is hereby granted, free of charge, to any person obtaining
++// a copy of this software and associated documentation files (the
++// "Software"), to deal in the Software without restriction, including
++// without limitation the rights to use, copy, modify, merge, publish,
++// distribute, sublicense, and/or sell copies of the Software, and to
++// permit persons to whom the Software is furnished to do so, subject to
++// the following conditions:
++//
++// The above copyright notice and this permission notice shall be
++// included in all copies or substantial portions of the Software.
++//
++// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++//
++using System;
++
++namespace Banshee.Streamrecorder.Gst
++{
++	public enum PadProbeReturn
++	{
++          GST_PAD_PROBE_DROP,
++          GST_PAD_PROBE_OK,
++          GST_PAD_PROBE_REMOVE,
++          GST_PAD_PROBE_PASS
++    }
++    
++}
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeType.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeType.cs
+new file mode 100644
+index 0000000..b2dbc4d
+--- /dev/null
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/PadProbeType.cs
+@@ -0,0 +1,63 @@
++//
++// Pad.cs
++//
++// Author:
++//   Frank Ziegler
++//
++// Copyright (C) 2009 Frank Ziegler
++//
++// Permission is hereby granted, free of charge, to any person obtaining
++// a copy of this software and associated documentation files (the
++// "Software"), to deal in the Software without restriction, including
++// without limitation the rights to use, copy, modify, merge, publish,
++// distribute, sublicense, and/or sell copies of the Software, and to
++// permit persons to whom the Software is furnished to do so, subject to
++// the following conditions:
++//
++// The above copyright notice and this permission notice shall be
++// included in all copies or substantial portions of the Software.
++//
++// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
++// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
++// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
++// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
++// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
++// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
++//
++using System;
++
++namespace Banshee.Streamrecorder.Gst
++{
++	public enum PadProbeType
++	{
++          GST_PAD_PROBE_TYPE_INVALID          = 0,
++          /* flags to control blocking */
++          GST_PAD_PROBE_TYPE_IDLE             = (1 << 0),
++          GST_PAD_PROBE_TYPE_BLOCK            = (1 << 1),
++          /* flags to select datatypes */
++          GST_PAD_PROBE_TYPE_BUFFER           = (1 << 4),
++          GST_PAD_PROBE_TYPE_BUFFER_LIST      = (1 << 5),
++          GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM = (1 << 6),
++          GST_PAD_PROBE_TYPE_EVENT_UPSTREAM   = (1 << 7),
++          GST_PAD_PROBE_TYPE_EVENT_FLUSH      = (1 << 8),
++          GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM = (1 << 9),
++          GST_PAD_PROBE_TYPE_QUERY_UPSTREAM   = (1 << 10),
++          /* flags to select scheduling mode */
++          GST_PAD_PROBE_TYPE_PUSH             = (1 << 12),
++          GST_PAD_PROBE_TYPE_PULL             = (1 << 13),
++
++          /* flag combinations */
++          GST_PAD_PROBE_TYPE_BLOCKING         = GST_PAD_PROBE_TYPE_IDLE | GST_PAD_PROBE_TYPE_BLOCK,
++          GST_PAD_PROBE_TYPE_DATA_DOWNSTREAM  = GST_PAD_PROBE_TYPE_BUFFER | GST_PAD_PROBE_TYPE_BUFFER_LIST | GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM,
++          GST_PAD_PROBE_TYPE_DATA_UPSTREAM    = GST_PAD_PROBE_TYPE_EVENT_UPSTREAM,
++          GST_PAD_PROBE_TYPE_DATA_BOTH        = GST_PAD_PROBE_TYPE_DATA_DOWNSTREAM | GST_PAD_PROBE_TYPE_DATA_UPSTREAM,
++          GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM = GST_PAD_PROBE_TYPE_BLOCK | GST_PAD_PROBE_TYPE_DATA_DOWNSTREAM,
++          GST_PAD_PROBE_TYPE_BLOCK_UPSTREAM   = GST_PAD_PROBE_TYPE_BLOCK | GST_PAD_PROBE_TYPE_DATA_UPSTREAM,
++          GST_PAD_PROBE_TYPE_EVENT_BOTH       = GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM | GST_PAD_PROBE_TYPE_EVENT_UPSTREAM,
++          GST_PAD_PROBE_TYPE_QUERY_BOTH       = GST_PAD_PROBE_TYPE_QUERY_DOWNSTREAM | GST_PAD_PROBE_TYPE_QUERY_UPSTREAM,
++          GST_PAD_PROBE_TYPE_ALL_BOTH         = GST_PAD_PROBE_TYPE_DATA_BOTH | GST_PAD_PROBE_TYPE_QUERY_BOTH,
++          GST_PAD_PROBE_TYPE_SCHEDULING       = GST_PAD_PROBE_TYPE_PUSH | GST_PAD_PROBE_TYPE_PULL
++	}
++
++}
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Parse.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Parse.cs
+index 1a801e4..788384f 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Parse.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Parse.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using System.Runtime.InteropServices;
+@@ -39,31 +41,31 @@ private Parse ()
+         {
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern IntPtr gst_parse_launch (IntPtr bin_description, out IntPtr gerror);
+ 
+         unsafe public static Pipeline Launch (string pipeline_description)
+         {
+-            IntPtr native_bin_description = GLib.Marshaller.StringToPtrGStrdup (pipeline_description);
++            IntPtr native_bin_description = OldGLib.Marshaller.StringToPtrGStrdup (pipeline_description);
+             IntPtr error = IntPtr.Zero;
+             IntPtr raw_ret = gst_parse_launch (native_bin_description, out error);
+-            GLib.Marshaller.Free (native_bin_description);
++            OldGLib.Marshaller.Free (native_bin_description);
+             if (error != IntPtr.Zero)
+-                throw new GLib.GException (error);
++                throw new OldGLib.GException (error);
+             return new Pipeline (raw_ret);
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern IntPtr gst_parse_bin_from_description (IntPtr bin_description, bool ghost_unlinked_pads, out IntPtr gerror);
+ 
+         unsafe public static Bin BinFromDescription (string bin_description, bool ghost_unlinked_pads)
+         {
+-            IntPtr native_bin_description = GLib.Marshaller.StringToPtrGStrdup (bin_description);
++            IntPtr native_bin_description = OldGLib.Marshaller.StringToPtrGStrdup (bin_description);
+             IntPtr error = IntPtr.Zero;
+             IntPtr raw_ret = gst_parse_bin_from_description (native_bin_description, ghost_unlinked_pads, out error);
+-            GLib.Marshaller.Free (native_bin_description);
++            OldGLib.Marshaller.Free (native_bin_description);
+             if (error != IntPtr.Zero)
+-                throw new GLib.GException (error);
++                throw new OldGLib.GException (error);
+             return new Bin (raw_ret);
+         }
+ 
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Pipeline.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Pipeline.cs
+index fe615ee..ba12884 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/Pipeline.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/Pipeline.cs
+@@ -39,7 +39,7 @@ public Pipeline (IntPtr pipeline) : base(pipeline)
+         {
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe public static extern IntPtr gst_pipeline_get_bus (IntPtr pipeline);
+ 
+         public Bus GetBus ()
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/State.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/State.cs
+index e8332b1..709b1f8 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/State.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/State.cs
+@@ -33,7 +33,6 @@ namespace Banshee.Streamrecorder.Gst
+ 
+     public enum State
+     {
+-
+         VoidPending,
+         Null = 1,
+         Ready = 2,
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/StateChangeReturn.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/StateChangeReturn.cs
+index ccf393f..d7e316a 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/StateChangeReturn.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/StateChangeReturn.cs
+@@ -33,7 +33,6 @@ namespace Banshee.Streamrecorder.Gst
+ 
+     public enum StateChangeReturn
+     {
+-
+         Failure,
+         Success = 1,
+         Async = 2,
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/TagList.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/TagList.cs
+index 75d7563..fb7604b 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/TagList.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/TagList.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using System.Runtime.InteropServices;
+@@ -35,7 +37,7 @@ namespace Banshee.Streamrecorder.Gst
+     public class TagList : GstObject
+     {
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern IntPtr gst_tag_list_new ();
+ 
+         protected TagList (IntPtr taglist) : base(taglist)
+@@ -46,16 +48,16 @@ public TagList () : this(gst_tag_list_new ())
+         {
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
+-        unsafe private static extern void gst_tag_list_add_value (IntPtr taglist, TagMergeMode mode, IntPtr tag, ref GLib.Value value);
++        [DllImport("libgstreamer-1.0.so.0")]
++        unsafe private static extern void gst_tag_list_add_value (IntPtr taglist, TagMergeMode mode, IntPtr tag, ref OldGLib.Value value);
+ 
+         public void AddStringValue (TagMergeMode mode, string tag, string value)
+         {
+-            GLib.Value val = new GLib.Value (GLib.GType.String);
++            OldGLib.Value val = new OldGLib.Value (OldGLib.GType.String);
+             val.Val = value;
+-            IntPtr native_tag = GLib.Marshaller.StringToPtrGStrdup (tag);
++            IntPtr native_tag = OldGLib.Marshaller.StringToPtrGStrdup (tag);
+             gst_tag_list_add_value (raw, mode, native_tag, ref val);
+-            GLib.Marshaller.Free (native_tag);
++            OldGLib.Marshaller.Free (native_tag);
+         }
+ 
+     }
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/TagMergeMode.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/TagMergeMode.cs
+index e76e3b6..4c6c466 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/TagMergeMode.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/TagMergeMode.cs
+@@ -33,7 +33,6 @@ namespace Banshee.Streamrecorder.Gst
+ 
+     public enum TagMergeMode
+     {
+-
+         Undefined,
+         ReplaceAll,
+         Replace,
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Gst/TagSetter.cs b/src/StreamRecorder/Banshee.Streamrecorder/Gst/TagSetter.cs
+index 66f3c2a..bf3c32a 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Gst/TagSetter.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Gst/TagSetter.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using System.Runtime.InteropServices;
+@@ -39,15 +41,15 @@ public TagSetter (IntPtr tagsetter) : base(tagsetter)
+         {
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
+-        private static extern GLib.GType gst_tag_setter_get_type ();
++        [DllImport("libgstreamer-1.0.so.0")]
++        private static extern OldGLib.GType gst_tag_setter_get_type ();
+ 
+-        public static new GLib.GType GetType ()
++        public static new OldGLib.GType GetType ()
+         {
+             return gst_tag_setter_get_type ();
+         }
+ 
+-        [DllImport("libgstreamer-0.10.so.0")]
++        [DllImport("libgstreamer-1.0.so.0")]
+         unsafe private static extern void gst_tag_setter_merge_tags (IntPtr tagsetter, IntPtr taglist, TagMergeMode mode);
+ 
+         public void MergeTags (TagList taglist, Gst.TagMergeMode mode)
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/PlayerAudioTee.cs b/src/StreamRecorder/Banshee.Streamrecorder/PlayerAudioTee.cs
+index 4065480..0193597 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/PlayerAudioTee.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/PlayerAudioTee.cs
+@@ -25,6 +25,8 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
+ 
+ using System;
+ using Banshee.Streamrecorder.Gst;
+@@ -75,18 +77,27 @@ public bool AddBin (Bin bin, bool use_pad_block)
+             fixture_pad.UnRef ();
+ 
+             if (use_pad_block) {
+-                Hyena.Log.Debug ("[Streamrecorder.PlayerAudioTee]<AddBin> blockin pad " + block_pad.GetPathString () + " to perform an operation");
+-
+-                block_pad.SetBlockedAsync (true, ReallyAddBin, user_data);
++                ulong blocking_probe = block_pad.AddProbe (PadProbeType.GST_PAD_PROBE_TYPE_BLOCK, ReallyAddBinBlocked, user_data, null);
++                Hyena.Log.DebugFormat ("[Streamrecorder.PlayerAudioTee]<AddBin> blockin pad {0} to perform an operation ({1})",block_pad.GetPathString (),blocking_probe);
+             } else {
+                 Hyena.Log.Debug ("Streamrecorder.PlayerAudioTee]<AddBin> not using blockin pad, calling operation directly");
+-                ReallyAddBin (block_pad.ToIntPtr (), false, user_data);
++                ReallyAddBinUnblocked (block_pad.ToIntPtr (), IntPtr.Zero, user_data);
+             }
+             block_pad.UnRef ();
+ 
+             return true;
+         }
+ 
++        private PadProbeReturn ReallyAddBinBlocked (IntPtr pad, IntPtr probe_info, IntPtr user_data)
++        {
++            return ReallyAddBin (pad, probe_info, user_data, true);
++        }
++
++        private PadProbeReturn ReallyAddBinUnblocked (IntPtr pad, IntPtr probe_info, IntPtr user_data)
++        {
++            return ReallyAddBin (pad, probe_info, user_data, false);
++        }
++
+         /// <summary>
+         /// Helper function to really attach a bin to the audio player tee
+         /// </summary>
+@@ -99,7 +110,7 @@ public bool AddBin (Bin bin, bool use_pad_block)
+         /// <param name="user_data">
+         /// A <see cref="IntPtr"/> containing references to the bin and the audio tee
+         /// </param>
+-        private void ReallyAddBin (IntPtr pad, bool blocked, IntPtr user_data)
++        private PadProbeReturn ReallyAddBin (IntPtr pad, IntPtr probe_info, IntPtr user_data, bool blocked)
+         {
+             GCHandle gch = GCHandle.FromIntPtr (user_data);
+             Bin[] user_bins = (Gst.Bin[])gch.Target;
+@@ -118,7 +129,7 @@ private void ReallyAddBin (IntPtr pad, bool blocked, IntPtr user_data)
+             if (element_parent != null && !element_parent.IsNull ()) {
+                 Hyena.Log.Debug ("[Streamrecorder.PlayerAudioTee]<ReallyAddBin>element already linked, exiting. assume double function call");
+                 element_parent.UnRef ();
+-                return;
++                return PadProbeReturn.GST_PAD_PROBE_OK;
+             }
+ 
+             /* set up containing bin */
+@@ -148,13 +159,17 @@ private void ReallyAddBin (IntPtr pad, bool blocked, IntPtr user_data)
+                 parent_bin.SetState (State.Playing);
+                 ghost_pad.Ref ();
+                 parent_bin.UnRef ();
+-                new Pad (pad).SetBlockedAsync (false, AddRemoveBinDone, ghost_pad.ToIntPtr ());
++//                new Pad (pad).AddProbe (PadProbeType.GST_PAD_PROBE_TYPE_BLOCK, AddRemoveBinDone, ghost_pad.ToIntPtr (), null);
++                PadProbeInfo info = (PadProbeInfo) Marshal.PtrToStructure (probe_info, typeof (PadProbeInfo));
++                new Pad (pad).RemoveProbe (info.id);
++                AddRemoveBinDone (IntPtr.Zero, IntPtr.Zero, ghost_pad.ToIntPtr ());
+             } else {
+                 parent_bin.SetState (State.Paused);
+                 ghost_pad.Ref ();
+                 parent_bin.UnRef ();
+-                AddRemoveBinDone (IntPtr.Zero, false, ghost_pad.ToIntPtr ());
++                AddRemoveBinDone (IntPtr.Zero, IntPtr.Zero, ghost_pad.ToIntPtr ());
+             }
++            return PadProbeReturn.GST_PAD_PROBE_OK;
+ 
+         }
+ 
+@@ -179,17 +194,26 @@ public bool RemoveBin (Bin bin, bool use_pad_block)
+             fixture_pad.UnRef ();
+ 
+             if (use_pad_block) {
+-                Hyena.Log.Debug ("[Streamrecorder.PlayerAudioTee]<RemoveBin> blockin pad " + block_pad.GetPathString () + " to perform an operation");
+-
+-                block_pad.SetBlockedAsync (true, ReallyRemoveBin, user_data);
++                ulong blocking_probe = block_pad.AddProbe (PadProbeType.GST_PAD_PROBE_TYPE_BLOCK, ReallyRemoveBinBlocked, user_data, null);
++                Hyena.Log.DebugFormat ("[Streamrecorder.PlayerAudioTee]<RemoveBin> blockin pad {0} to perform an operation ({1})", block_pad.GetPathString (), blocking_probe);
+             } else {
+                 Hyena.Log.Debug ("[Streamrecorder.PlayerAudioTee]<RemoveBin> not using blockin pad, calling operation directly");
+-                ReallyRemoveBin (block_pad.ToIntPtr (), false, user_data);
++                ReallyRemoveBinUnblocked (block_pad.ToIntPtr (), IntPtr.Zero, user_data);
+             }
+             block_pad.UnRef ();
+             return true;
+         }
+ 
++        private PadProbeReturn ReallyRemoveBinBlocked (IntPtr pad, IntPtr probe_info, IntPtr user_data)
++        {
++            return ReallyRemoveBin (pad, probe_info, user_data, true);
++        }
++
++        private PadProbeReturn ReallyRemoveBinUnblocked (IntPtr pad, IntPtr probe_info, IntPtr user_data)
++        {
++            return ReallyRemoveBin (pad, probe_info, user_data, false);
++        }
++
+         /// <summary>
+         /// Helper function to really remove the bin from the audio player tee
+         /// </summary>
+@@ -202,7 +226,7 @@ public bool RemoveBin (Bin bin, bool use_pad_block)
+         /// <param name="user_data">
+         /// A <see cref="IntPtr"/> containing a reference to the bin
+         /// </param>
+-        private void ReallyRemoveBin (IntPtr pad, bool blocked, IntPtr user_data)
++        private PadProbeReturn ReallyRemoveBin (IntPtr pad, IntPtr probe_info, IntPtr user_data, bool blocked)
+         {
+             Bin element = new Bin (user_data);
+ 
+@@ -212,7 +236,7 @@ private void ReallyRemoveBin (IntPtr pad, bool blocked, IntPtr user_data)
+             string element_path = element.GetPathString ();
+             if (!element_path.Contains (":") && element_path.StartsWith ("/0x")) {
+                 Hyena.Log.Debug ("[Streamrecorder.PlayerAudioTee]<ReallyRemoveBin> element empty, assume disposed, exiting: " + element_path);
+-                return;
++                return PadProbeReturn.GST_PAD_PROBE_OK;
+             }
+ 
+             bin = new Bin (element.GetParent ().ToIntPtr ());
+@@ -230,9 +254,13 @@ private void ReallyRemoveBin (IntPtr pad, bool blocked, IntPtr user_data)
+             /* if we're supposed to be playing, unblock the sink */
+             if (blocked) {
+                 Hyena.Log.Debug ("[Streamrecorder.PlayerAudioTee]<ReallyRemoveBin> unblocking pad after removing tee");
+-                new Pad (pad).SetBlockedAsync (false, AddRemoveBinDone, IntPtr.Zero);
++//                new Pad (pad).AddProbe (PadProbeType.GST_PAD_PROBE_TYPE_BLOCK, AddRemoveBinDone, IntPtr.Zero, null);
++                PadProbeInfo info = (PadProbeInfo) Marshal.PtrToStructure (probe_info, typeof (PadProbeInfo));
++                new Pad (pad).RemoveProbe (info.id);
++                AddRemoveBinDone (IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+             }
+ 
++            return PadProbeReturn.GST_PAD_PROBE_OK;
+         }
+ 
+         /// <summary>
+@@ -247,16 +275,18 @@ private void ReallyRemoveBin (IntPtr pad, bool blocked, IntPtr user_data)
+         /// <param name="new_pad">
+         /// A <see cref="IntPtr"/> referencing the new (ghost) pad that waits for an event or Zero for removed bins
+         /// </param>
+-        public void AddRemoveBinDone (IntPtr pad, bool blocked, IntPtr new_pad)
++        public PadProbeReturn AddRemoveBinDone (IntPtr pad, IntPtr probe_info, IntPtr new_pad)
+         {
+-            IntPtr segment;
++            IntPtr segment_event;
+             if (new_pad == IntPtr.Zero) {
+-                return;
++                return PadProbeReturn.GST_PAD_PROBE_OK;
+             }
+ 
+             // send a very unimaginative new segment through the new pad
+-            segment = Marshaller.CreateSegment ();
+-            new Pad (new_pad).SendEvent (segment);
++            segment_event = Marshaller.CreateSegmentEvent ();
++            new Pad (new_pad).SendEvent (segment_event);
++            return PadProbeReturn.GST_PAD_PROBE_OK;
++
+         }
+ 
+         /// <summary>
+diff --git a/src/StreamRecorder/Banshee.Streamrecorder/Recorder.cs b/src/StreamRecorder/Banshee.Streamrecorder/Recorder.cs
+index 6157676..31c8320 100644
+--- a/src/StreamRecorder/Banshee.Streamrecorder/Recorder.cs
++++ b/src/StreamRecorder/Banshee.Streamrecorder/Recorder.cs
+@@ -25,6 +25,10 @@
+ // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ //
++extern alias oldGlib;
++using OldGLib = oldGlib.GLib;
++
++using System.Runtime.InteropServices;
+ 
+ using System;
+ using System.IO;
+@@ -86,7 +90,7 @@ public Recorder ()
+                 if (Marshaller.Initialize ()) {
+                     encoders.Add (new Encoder ("None (unchanged stream)", "! identity ", null));
+ 
+-                    has_lame = Marshaller.CheckGstPlugin ("lame") && Marshaller.CheckGstPlugin ("id3v2mux");
++                    has_lame = Marshaller.CheckGstPlugin ("lamemp3enc") && Marshaller.CheckGstPlugin ("id3v2mux");
+                     Hyena.Log.Debug ("[Streamrecorder] GstPlugin lame" + (has_lame ? "" : " not") + " found");
+                     if (has_lame) encoders.Add (new Encoder (lame_name, lame_pipeline, lame_extension));
+ 
+@@ -128,6 +132,7 @@ public bool Create ()
+                 }
+ 
+                 encoder_bin = Parse.BinFromDescription (bin_description, true);
++//                Hyena.Log.Debug ("DEBUG bin to string: " + encoder_bin.ToString());
+ 
+                 tagger = new TagSetter (encoder_bin.GetByInterface (TagSetter.GetType ()));
+                 file_sink = encoder_bin.GetByName ("file_sink").ToFileSink ();
+@@ -136,7 +141,7 @@ public bool Create ()
+                 file_sink.SetBooleanProperty ("sync", true);
+                 file_sink.SetBooleanProperty ("async", false);
+ 
+-                GLib.Object.GetObject (file_sink.ToIntPtr ()).AddNotification ("allow-overwrite", OnAllowOverwrite);
++                OldGLib.Object.GetObject (file_sink.ToIntPtr ()).AddNotification ("allow-overwrite", OnAllowOverwrite);
+ 
+                 ghost_pad = encoder_bin.GetStaticPad ("sink").ToGhostPad ();
+ 
+@@ -153,6 +158,7 @@ public bool Create ()
+                 Hyena.Log.Debug ("[Recorder] Recorder attached");
+             } catch (Exception e) {
+                 Hyena.Log.InformationFormat ("[Streamrecorder] An exception occurred during pipeline construction: {0}", bin_description);
++                Hyena.Log.Debug (e.Message);
+                 Hyena.Log.Debug (e.StackTrace);
+                 return false;
+             }
+@@ -269,7 +275,7 @@ public Encoder GetFirstAvailableEncoder ()
+         /// <param name="args">
+         /// A <see cref="GLib.NotifyArgs"/> -- not used
+         /// </param>
+-        private void OnAllowOverwrite (object o, GLib.NotifyArgs args)
++        private void OnAllowOverwrite (object o, OldGLib.NotifyArgs args)
+         {
+             return;
+         }
+@@ -286,9 +292,8 @@ public void StartRecording ()
+             if (outputselector != null && !outputselector.IsNull () && encoder_bin != null && !encoder_bin.IsNull ()) {
+                 try {
+                     //switch output-selector: set file location and set active pad to filesink
+-                    SetNewTrackLocation (output_file + file_extension);
+-                    outputselector.SetProperty ("active-pad", new Element (selector_filepad.ToIntPtr ()));
+-                    Hyena.Log.Debug ("[Recorder] <StartRecording> Recording started");
++                    SetNewTrackLocation (output_file + file_extension,selector_filepad.ToIntPtr ());
++                    //outputselector.SetProperty ("active-pad", new Element (selector_filepad.ToIntPtr ()));
+                     is_recording = true;
+                 } catch (Exception e) {
+                     is_recording = false;
+@@ -305,9 +310,9 @@ public void StopRecording ()
+         {
+             if (encoder_bin != null && !encoder_bin.IsNull () && outputselector != null && !outputselector.IsNull ()) {
+                 try {
+-                    //switch output-selector: set file location to /tmp and set active pad to fakesink
+-                    SetNewTrackLocation (empty_file);
+-                    outputselector.SetProperty ("active-pad", new Element (selector_fakepad.ToIntPtr ()));
++                    //switch output-selector: set file location to /dev/null and set active pad to fakesink
++                    SetNewTrackLocation (empty_file,selector_fakepad.ToIntPtr ());
++                    //outputselector.SetProperty ("active-pad", new Element (selector_fakepad.ToIntPtr ()));
+                     //string outputpadparent = new Pad (outputselector.GetProperty ("active-pad")).GetPeer ().GetParent ().GetPathString ();
+                     Hyena.Log.Debug ("[Recorder] <StopRecording> Recording stopped");
+                     is_recording = false;
+@@ -338,7 +343,7 @@ public bool AddStreamTags (TrackInfo track, bool splitfiles)
+             if (splitfiles && file_sink != null && track.ArtistName != null && track.ArtistName.Length > 0) {
+                 if (track.ArtistName != lastArtist || track.TrackTitle != lastTitle) {
+                     SetMetadataFilename (track.TrackTitle, track.ArtistName);
+-                    SetNewTrackLocation (output_file + file_extension);
++                    SetNewTrackLocation (output_file + file_extension, IntPtr.Zero);
+                 }
+             }
+ 
+@@ -363,7 +368,7 @@ public bool AddStreamTags (TrackInfo track, bool splitfiles)
+                 if (track.AlbumTitle != null)
+                     taglist.AddStringValue (TagMergeMode.ReplaceAll, "album", track.AlbumTitle);
+ 
+-                tagger.MergeTags (taglist, TagMergeMode.ReplaceAll);
++                tagger.MergeTags (taglist, TagMergeMode.KeepAll);
+             } catch (Exception e) {
+                 Hyena.Log.Information ("[Streamrecorder] An exception occurred during gstreamer operation");
+                 Hyena.Log.Debug (e.StackTrace);
+@@ -451,23 +456,24 @@ private string SetOutputFile (string fullfilename)
+         /// <param name="new_location">
+         /// A <see cref="System.String"/> containing the full new filename and path
+         /// </param>
+-        private void SetNewTrackLocation (string new_location)
++        private void SetNewTrackLocation (string new_location, IntPtr active_pad)
+         {
+             try {
+                 Pad teepad = ghost_pad.GetPeer ();
+-                if (ServiceManager.PlayerEngine.CurrentState == PlayerState.Playing)
++                if (encoder_bin.GetState () == StateChangeReturn.Success &&
++                    ServiceManager.PlayerEngine.CurrentState == PlayerState.Playing)
+                 {
+-                    teepad.SetBlocked (true);
+-                    encoder_bin.SendEvent (Marshaller.NewEOSEvent ());
+-                    encoder_bin.SetState (State.Null);
+-                    file_sink.Location = new_location;
+-                    encoder_bin.SetState (State.Ready);
+-                    encoder_bin.SetState (State.Playing);
+-                    teepad.SetBlocked (false);
++                    object[] user_objects = new object[3] { teepad.ToIntPtr (), new_location, active_pad };
++                    GCHandle gch = GCHandle.Alloc (user_objects);
++                    IntPtr user_data = GCHandle.ToIntPtr (gch);
++                    ulong probe_id = teepad.AddProbe (PadProbeType.GST_PAD_PROBE_TYPE_BLOCK, SetNewTrackLocationBlocked, user_data, null);
++                    Hyena.Log.Information ("[Streamrecorder] changing location during playing state (probe_id=" + probe_id + ")");
+                 } else {
+                     encoder_bin.SendEvent (Marshaller.NewEOSEvent ());
+                     encoder_bin.SetState (State.Null);
+                     file_sink.Location = new_location;
++                    if (active_pad != IntPtr.Zero)
++                        outputselector.SetProperty ("active-pad", new Element (active_pad));
+                     encoder_bin.SetState (State.Ready);
+                 }
+             } catch (Exception e) {
+@@ -476,6 +482,36 @@ private void SetNewTrackLocation (string new_location)
+             }
+         }
+ 
++        private PadProbeReturn SetNewTrackLocationBlocked (IntPtr pad, IntPtr probe_info, IntPtr user_data)
++        {
++            Hyena.ThreadAssist.Spawn( delegate () {
++            //Hyena.Log.Information ("[Streamrecorder] changing location blocked" + (Hyena.ThreadAssist.InMainThread ? " in main thread" : " in new thread"));
++            GCHandle gch = GCHandle.FromIntPtr (user_data);
++            object[] user_objects = (object[])gch.Target;
++            PadProbeInfo info = (PadProbeInfo) Marshal.PtrToStructure (probe_info, typeof (PadProbeInfo));
++            Pad teepad = new Pad ((IntPtr) user_objects[0]);
++            string new_location = (string)user_objects [1];
++            IntPtr active_pad = (IntPtr)user_objects [2];
++            encoder_bin.SendEvent (Marshaller.NewEOSEvent ());
++            encoder_bin.SetState (State.Null);
++            if (encoder_bin.GetState () == StateChangeReturn.Success) {
++                //Hyena.Log.Information ("[Streamrecorder] setting new location: " + new_location);
++                file_sink.Location = new_location;
++            } else {
++                Hyena.Log.Debug ("[Streamrecorder] State change failed");
++            }
++            encoder_bin.SetState (State.Playing);
++            teepad.RemoveProbe (info.id);
++            if (active_pad != IntPtr.Zero)
++                outputselector.SetProperty ("active-pad", new Element (active_pad));
++            if (!new_location.Equals (empty_file)) {
++                Hyena.Log.Debug ("[Streamrecorder] <SetNewTrackLocationBlocked> Recording started");
++                is_recording = true;
++                }
++            });
++            return PadProbeReturn.GST_PAD_PROBE_OK;
++        }
++
+         /// <summary>
+         /// Detaches the encoder bin from the audiotee
+         /// </summary>
+diff --git a/src/StreamRecorder/Makefile.am b/src/StreamRecorder/Makefile.am
+index 30b9556..c46b5dd 100644
+--- a/src/StreamRecorder/Makefile.am
++++ b/src/StreamRecorder/Makefile.am
+@@ -1,5 +1,8 @@
+ ASSEMBLY = Banshee.Streamrecorder
+-LINK = $(BANSHEE_LIBS)
++
++OLD_GLIB = -r:oldGlib=${expanded_libdir}/pkgconfig/../../lib/cli/glib-sharp-2.0/glib-sharp.dll
++LINK = $(BANSHEE_LIBS) $(OLD_GLIB)
++
+ GMCS_FLAGS = -unsafe
+ 
+ SOURCES =  \
+@@ -18,6 +21,10 @@ SOURCES =  \
+ 	Banshee.Streamrecorder/Gst/Pad.cs \
+ 	Banshee.Streamrecorder/Gst/PadBlockCallback.cs \
+ 	Banshee.Streamrecorder/Gst/PadDirection.cs \
++	Banshee.Streamrecorder/Gst/PadProbeCallback.cs \
++	Banshee.Streamrecorder/Gst/PadProbeInfo.cs \
++	Banshee.Streamrecorder/Gst/PadProbeReturn.cs \
++	Banshee.Streamrecorder/Gst/PadProbeType.cs \
+ 	Banshee.Streamrecorder/Gst/Parse.cs \
+ 	Banshee.Streamrecorder/Gst/Pipeline.cs \
+ 	Banshee.Streamrecorder/Gst/State.cs \
+diff --git a/src/StreamRecorder/Streamrecorder.csproj b/src/StreamRecorder/Streamrecorder.csproj
+index 9d08402..275c46c 100644
+--- a/src/StreamRecorder/Streamrecorder.csproj
++++ b/src/StreamRecorder/Streamrecorder.csproj
+@@ -45,19 +45,7 @@
+   <ItemGroup>
+     <Reference Include="System" />
+     <Reference Include="System.Xml" />
+-    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+-      <Package>gtk-sharp-2.0</Package>
+-    </Reference>
+     <Reference Include="Mono.Posix" />
+-    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+-      <Package>gtk-sharp-2.0</Package>
+-    </Reference>
+-    <Reference Include="Mono.Addins, Version=0.4.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
+-      <Package>mono-addins</Package>
+-    </Reference>
+-    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
+-      <Package>glib-sharp-2.0</Package>
+-    </Reference>
+     <Reference Include="Banshee.Core, Version=1.6.0.0, Culture=neutral">
+       <Package>banshee-core</Package>
+       <SpecificVersion>False</SpecificVersion>
+@@ -74,9 +62,34 @@
+       <Package>banshee-thickclient</Package>
+       <SpecificVersion>False</SpecificVersion>
+     </Reference>
+-    <Reference Include="Hyena, Version=1.9.0.0, Culture=neutral">
++    <Reference Include="gdk-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
++      <Private>False</Private>
++      <Package>gtk-sharp-3.0</Package>
++    </Reference>
++    <Reference Include="glib-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
++      <Private>False</Private>
++      <Package>glib-sharp-3.0</Package>
++    </Reference>
++    <Reference Include="gtk-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
++      <Private>False</Private>
++      <Package>gtk-sharp-3.0</Package>
++    </Reference>
++    <Reference Include="Hyena.Gui, Version=2.9.0.0, Culture=neutral">
++      <Private>False</Private>
++      <Package>banshee-hyena-gui</Package>
++    </Reference>
++    <Reference Include="Hyena, Version=2.9.0.0, Culture=neutral">
++      <Private>False</Private>
+       <Package>banshee-hyena</Package>
+     </Reference>
++    <Reference Include="Mono.Addins, Version=0.6.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756">
++      <Private>False</Private>
++      <Package>mono-addins</Package>
++    </Reference>
++    <Reference Include="pango-sharp, Version=3.0.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f">
++      <Private>False</Private>
++      <Package>gtk-sharp-3.0</Package>
++    </Reference>
+   </ItemGroup>
+   <ItemGroup>
+     <EmbeddedResource Include="Banshee.Streamrecorder.addin.xml">
+@@ -117,6 +130,10 @@
+     <Compile Include="Banshee.Streamrecorder\Gst\BusFunc.cs" />
+     <Compile Include="Banshee.Streamrecorder\Gst\ElementFactory.cs" />
+     <Compile Include="Banshee.Streamrecorder\Gst\Iterator.cs" />
++    <Compile Include="Banshee.Streamrecorder\Gst\PadProbeCallback.cs" />
++    <Compile Include="Banshee.Streamrecorder\Gst\PadProbeType.cs" />
++    <Compile Include="Banshee.Streamrecorder\Gst\PadProbeReturn.cs" />
++    <Compile Include="Banshee.Streamrecorder\Gst\PadProbeInfo.cs" />
+   </ItemGroup>
+   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+   <ProjectExtensions>

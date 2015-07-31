@@ -1,0 +1,151 @@
+#!/bin/sh
+
+# Slackware build script for unity
+
+# Copyright 2014 Matthew Kuzminski Toronto, ON
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+PRGNAM=unity # replace with name of program
+VERSION=${VERSION:-7.2.0.14.04.20140423} # replace with version of program
+BUILD=${BUILD:-1}
+TAG=${TAG:-_uSB}
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+case "$( uname -m )" in
+i?86) ARCH=i486 ;;
+arm*) ARCH=arm ;;
+# Unless $ARCH is already set, use uname -m for all other archs:
+*) ARCH=$( uname -m ) ;;
+esac
+fi
+
+CWD=$(pwd)
+TMP=${TMP:-/tmp/build}
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp} # Drop the package in /tmp
+
+if [ "$ARCH" = "i486" ]; then
+SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+SLKCFLAGS="-O2 -fPIC"
+LIBDIRSUFFIX="64"
+else
+SLKCFLAGS="-O2"
+LIBDIRSUFFIX=""
+fi
+
+set -e # Exit on most errors
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf unity-7.2.0+14.04.20140423
+tar xvf $CWD/unity_7.2.0+14.04.20140423.orig.tar.gz
+cd unity-7.2.0+14.04.20140423
+chown -R root:root .
+#find -L . ( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 ) -exec chmod 755 {} ; -o ( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 ) -exec chmod 644 {} ;
+
+patch -p1 -i "$CWD/0001-Disable-tests.patch"
+patch -p1 -i "$CWD/0002-Slackware-Linux-branding.patch"
+patch -p1 -i "$CWD/0003-Revert-r3134-Remove-Systray-Whitelist.patch"
+patch -p1 -i "$CWD/0004-Disable-Werror.patch"
+patch -p1 -i "$CWD/0005-Fix-launchers.patch"
+patch -p1 -i "$CWD/0006-Remove-Upstart-stuff.patch"
+patch -p1 -i "$CWD/0007-Remove-social.scope.patch"
+
+# Apply Ubuntu patches
+zcat "$CWD/unity_7.2.0+14.04.20140423-0ubuntu1.2.diff.gz" | patch -p1
+for i in $(grep -v '#' debian/patches/series); do
+patch -p1 -i "debian/patches/${i}"
+done
+
+# (From debian/rules) http://ccache.samba.org/manual.html#_precompiled_headers
+export CCACHE_SLOPPINESS=time_macros
+
+[[ -d build ]] && rm -rvf build/
+mkdir build/ && cd build/
+cmake -Wno-dev -DCOMPIZ_BUILD_WITH_RPATH=FALSE -DCOMPIZ_PACKAGING_ENABLED=TRUE -DCOMPIZ_PLUGIN_INSTALL_TYPE=package -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DUSE_GSETTINGS=TRUE ..
+
+make -j1
+
+# Make sure that the GSettings schema files were created
+pushd generated/glib-2.0/schemas/
+if [ ! -f org.compiz.networkarearegion.gschema.xml ] || [ ! -f org.compiz.unitydialog.gschema.xml ] || [ ! -f org.compiz.unitymtgrabhandles.gschema.xml ] ||
+[ ! -f org.compiz.unityshell.gschema.xml ]; then
+make compiz_gsettings_compile_local
+fi
+popd
+
+make DESTDIR="$PKG" install
+
+# Install profile convert files
+install -dm755 "$PKG/usr/lib/compiz/migration/"
+install -m644 ../tools/convert-files/* "$PKG/usr/lib/compiz/migration/"
+
+# Taken from Ubuntu source package's debian/rules file
+find "$PKG/usr/lib" -name *.*a -exec rm {} \;
+rm -vf "$PKG/usr/share/compiz/networkarearegion.xml"
+rm -vf "$PKG/usr/lib/compiz/libnetworkarearegion.so"
+rm -vf "$PKG/usr/share/compiz/unitydialog.xml"
+rm -vf "$PKG/usr/lib/compiz/libunitydialog.so"
+
+# Fix Python 2 scripts
+sed -i 's|^(#!.*python$)|12|g' "$PKG/usr/bin/unity" "$PKG/usr/lib/unity/makebootchart.py"
+
+# Slackware Linux logo
+install -m644 "$CWD/launcher_bfb.png" "$PKG/usr/share/unity/icons/launcher_bfb.png"
+
+# Change window dragging key back to Alt. Super conflicts with Unity's other
+# hotkeys.
+install -m644 "$CWD/10_unity.gschema.override" "$PKG/usr/share/glib-2.0/schemas/"
+
+install -m644 "$CWD/com.ubuntu.user-interface.gschema.xml" "$PKG/usr/share/glib-2.0/schemas/"
+
+# Fix launching of unity-panel-service (from unity-gentoo project)
+install -dm755 "$PKG/etc/X11/xinit/xinitrc.d/"
+install -m755 "$CWD/99unity-panel-service" "$PKG/etc/X11/xinit/xinitrc.d/"
+
+# Install script for running Unity with debug output (from unity-gentoo project)
+install -m755 "$CWD/unity-debug" "$PKG/usr/bin/"
+
+# Use language packs
+rm -r "$PKG/usr/share/locale/"
+
+# Fix insecure rpath in libunityshell.so
+#chrpath --replace /usr/lib/libunity:/usr/lib/compiz "$PKG/usr/lib/compiz/libunityshell.so"
+
+find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+# cp -a # <documentation> # $PKG/usr/doc/$PRGNAM-$VERSION
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+#cat $CWD/setup.$PKGNAM > $PKG/var/log/setup/setup.$PKGNAM
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

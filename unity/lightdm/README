@@ -1,0 +1,28 @@
+When removing you'll want to run
+
+post-removal:
+rm -f /etc/lightdm.conf
+
+if [ -d /var/lib/lightdm ]; then
+  rm -r /var/lib/lightdm
+fi
+
+if [ -d /var/log/lightdm ]; then
+  rm -r /var/log/lightdm
+fi  
+
+if [ -d /var/cache/lightdm ]; then
+  rm -r /var/cache/lightdm
+fi  
+
+if [ -d /var/run/lightdm/authority ]; then
+  rm -r /var/run/lightdm/authority
+fi  
+
+if getent passwd lightdm >/dev/null; then
+  userdel -r -f lightdm
+fi  
+if getent group lightdm >/dev/null; then
+  groupdel lightdm
+fi
+

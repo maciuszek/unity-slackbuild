@@ -1,0 +1,23 @@
+# Changes the build order, because Karaoke has to be built after StreamRecorder
+# [schmatzler@hirnschwund.net]
+diff -U 3 -H -d -r -N -- ext-unpatched/src/Makefile.am ext-patched/src/Makefile.am
+--- ext-unpatched/src/Makefile.am	2015-06-14 19:35:42.201682284 +0200
++++ ext-patched/src/Makefile.am	2015-06-14 19:42:48.629652429 +0200
+@@ -11,7 +11,6 @@
+ 	Fanart \
+ 	FolderSync \
+ 	Jamendo \
+-	Karaoke \
+ 	LastfmFingerprint \
+ 	LCD \
+ 	Lirc \
+@@ -25,7 +24,8 @@
+ 	SongKick \
+ 	StreamRecorder \
+ 	Telepathy \
+-	ZeitgeistDataprovider
++	ZeitgeistDataprovider \
++	Karaoke
+ 
+ EXTRA_DIST = AssemblyInfo.cs.in
+ 

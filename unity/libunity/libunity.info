@@ -1,0 +1,12 @@
+PRGNAM="libunity"
+VERSION="7.1.4+14.10.20140808"
+HOMEPAGE=""
+DOWNLOAD="https://launchpad.net/ubuntu-rtm/14.09/+source/libunity/7.1.4+14.10.20140808-0ubuntu1/+files/libunity_7.1.4+14.10.20140808.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/libunity_7.1.4+14.04.20140210-0ubuntu1.diff.gz"
+MD5SUM="86093af8ac67a383e653d5ac868e5ad0 \  
+	8d17b1043bf3fcdbfc8196126568ac1c"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="%BuildOrder%"
+MAINTAINER="Macius Kuzmin"
+EMAIL="szczecinska.duma@gmail.com"

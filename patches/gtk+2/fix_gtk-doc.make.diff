@@ -1,0 +1,11 @@
+--- a/gtk-doc.make	2014-08-25 21:31:27.392869109 -0400
++++ b/gtk-doc.make	2014-08-25 21:31:59.915002505 -0400
+@@ -291,7 +291,7 @@
+ #
+ # Require gtk-doc when making dist
+ #
+-if HAVE_GTK_DOC
++if ENABLE_GTK_DOC
+ dist-check-gtkdoc: docs
+ else
+ dist-check-gtkdoc:

@@ -1,0 +1,12 @@
+PRGNAM="gnome-control-center"
+VERSION="3.12.1"
+HOMEPAGE=""
+DOWNLOAD="http://ftp.gnome.org/pub/gnome/sources/gnome-control-center/3.12/gnome-control-center-3.12.1.tar.xz \  
+	http://ppa.launchpad.net/gnome3-team/gnome3-staging/ubuntu/pool/main/g/gnome-control-center/gnome-control-center_3.12.1-0ubuntu1~trusty1.debian.tar.gz"
+MD5SUM="412daa52c78f7ee5224c30e82128a02e \  
+	2fc3a355aafc435508877acb77597f83"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="%BuildOrder%"
+MAINTAINER="Macius Kuzmin"
+EMAIL="szczecinska.duma@gmail.com"

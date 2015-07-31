@@ -1,0 +1,37 @@
+ Then, edit the file /usr/local/c-icap/etc/c-icap.conf. It contains a set of documented values that configure the c-icap server. To enable the support of SquidClamav just add the following line to the end of the file:
+
+	Service squidclamav squidclamav.so
+
+Don't care about the srv_clamav.* configuration directives this will not breaks anything. SquidClamav do not use them but read its own directives from the file /etc/squidclamav.conf
+
+You must disable the c-icap embedded modules by commenting the lines:
+
+	#Service url_check_module srv_url_check.so
+	#Service antivirus_module srv_clamav.so
+
+if you have not installed the c-icap modules and this will also preserve some resources.
+
+Following your installation you may need to create the /var/run/c-icap/ where c-icap server is writing pid and socket file.
+
+You may also want to change the user/group owning c-icap's processes. By default the owner is the user/group who runs the program. I recommand you to change them to the same user/group running your Squid cache. For example:
+
+	User proxy
+	Group proxy
+
+of course you will need to change the owner of directory /var/run/c-icap/ and the directory of your server log. See the ServerLog directive to know the path. For me, I use the following commands to set the good rights on my installation:
+
+	mkdir /var/run/c-icap/
+	chown -R proxy:proxy /var/run/c-icap/
+	chown -R proxy:proxy /usr/local/c-icap/
+
+Runing c-icap server
+
+Finally, you can run the c-icap server as root user:
+
+	/usr/local/c-icap/bin/c-icap
+
+Or any other path to the binary. If you want to display debugging information on the terminal, the previous command should be executed with the following arguments:
+
+	/usr/local/c-icap/bin/c-icap -N -D -d 10
+
+The first argument -N prevents the c-icap server from forking in the background, the second argument -D enables the printing of messages to standard output, and the third argument -d 10 enables the printing of full debugging information. 

@@ -1,0 +1,16 @@
+--- source/src/Makefile.am	2008-05-01 12:46:12.000000000 -0600
++++ source/src/Makefile.am	2009-01-23 10:52:32.000000000 -0700
+@@ -25,10 +25,10 @@
+ # (see also Assembly.am)
+ $(monodoc_DATA):
+ 	for x in $(filter-out Tao.OpenGl Tao.GlBindGen, $(SUBDIRS)); do \
+-	  monodocer --assembly:$$x/$$x.dll --path:doc/$$x; \
++	  mdoc update -o doc/$$x $$x/$$x.dll; \
+         done
+-	mdassembler --out Tao \
+-	  $(addprefix --ecma doc/, $(filter-out Tao.OpenGl Tao.GlBindGen, $(SUBDIRS)))
++	mdoc assemble -o Tao \
++	  $(addprefix doc/, $(filter-out Tao.OpenGl Tao.GlBindGen, $(SUBDIRS)))
+ 
+ clean-local:
+ 	rm -Rf doc

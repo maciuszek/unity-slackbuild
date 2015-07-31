@@ -1,0 +1,445 @@
+--- djmount-0.71.orig/debian/copyright
++++ djmount-0.71/debian/copyright
+@@ -0,0 +1,46 @@
++Format-Specification: http://svn.debian.org/wsvn/dep/web/deps/dep5.mdwn?op=file&rev=59
++Upstream-Name: djmount
++Upstream-Maintainer: Rémi Turboult <r3mi@users.sourceforge.net>
++Upstream-Source: https://sourceforge.net/projects/djmount/files/djmount/
++
++Files: *
++Copyright: 2000-2003, Intel Corporation
++                2005, Dmitry Zakharov aka ChaoS <dmitry-z@mail.ru>
++           2005-2006, Rémi Turboult <r3mi@users.sourceforge.net>
++License: GPL-2+
++ On Debian systems the full text of the GNU General Public 
++ License can be found in the `/usr/share/common-licenses/GPL-2'
++ file.
++
++Files: gl/*
++Copyright: 1990-2005, Free Software Foundation, Inc
++License: GPL-2+
++  On Debian systems the full text of the GNU General Public 
++  License can be found in the `/usr/share/common-licenses/GPL-2'
++  file.
++
++Files: libupnp/*
++Copyright: 2000-2003, Intel Corporation
++License: BSD
++  On Debian systems the full text of the GNU General Public 
++  License can be found in the `/usr/share/common-licenses/BSD'
++  file.
++
++Files: talloc/*
++Copyright: 2004-2005, Andrew Tridgell
++License: LGPL-2+
++  On Debian systems the full text of the GNU General Public 
++  License can be found in the `/usr/share/common-licenses/LGPL-2'
++  file.
++
++Files: debian/*
++Copyright: 2009-2010, Dario Minnucci <midget@debian.org>
++License: GPL-2+
++   On Debian systems the full text of the GNU General Public 
++   License can be found in the `/usr/share/common-licenses/GPL-2'
++   file.
++
++
++This package was debianized by Dario Minnucci <midget@debian.org> on
++Fri, 11 Sep 2009 01:57:14 +0200.
++
+--- djmount-0.71.orig/debian/dirs
++++ djmount-0.71/debian/dirs
+@@ -0,0 +1 @@
++usr/bin
+--- djmount-0.71.orig/debian/README.Debian
++++ djmount-0.71/debian/README.Debian
+@@ -0,0 +1,32 @@
++djmount for Debian
++------------------
++
++ djmount was tested under a Debian GNU/Linux system running mediatomb software.
++
++ * Loaded modules:
++
++   The FUSE kernel module shall be loaded before running djmount, otherwise 
++   you will get the error: 
++
++     fusermount: fuse device not found, try 'modprobe fuse' first 
++
++
++ * Running djmount:
++
++   Use the following command in order to add yourself to the 'fuse' group if you 
++   are not yet a member:
++
++     $ sudo adduser <username> fuse
++
++
++   If you are not part of the 'fuse' group, you will get this message:
++   
++     $ djmount -f /mnt/mountpoint
++     [I] Charset : successfully initialised charset='ISO-8859-1'
++     [I] UPnP Initialized (xxx.xxx.xxx.xxx:xxx)
++     fuse: failed to open /dev/fuse: Permission denied
++     [E] Error in FUSE main loop = 1
++
++
++ -- Dario Minnucci <midget@debian.org>  Fri, 22 Jan 2010 02:09:20 +0100
++
+--- djmount-0.71.orig/debian/rules
++++ djmount-0.71/debian/rules
+@@ -0,0 +1,103 @@
++#!/usr/bin/make -f
++
++#export DH_VERBOSE=1
++
++DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
++DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
++
++
++ifneq ($(DEB_HOST_GNU_TYPE),$(DEB_BUILD_GNU_TYPE))
++CROSS= --build $(DEB_BUILD_GNU_TYPE) --host $(DEB_HOST_GNU_TYPE)
++else
++CROSS= --build $(DEB_BUILD_GNU_TYPE)
++endif
++
++include /usr/share/quilt/quilt.make
++
++
++config.status: configure
++	dh_testdir
++ifneq "$(wildcard /usr/share/misc/config.sub)" ""
++	cp -f /usr/share/misc/config.sub config.sub
++	cp -f /usr/share/misc/config.sub libupnp/config.aux/config.sub
++endif
++ifneq "$(wildcard /usr/share/misc/config.guess)" ""
++	cp -f /usr/share/misc/config.guess config.guess
++	cp -f /usr/share/misc/config.guess libupnp/config.aux/config.guess
++endif
++
++	./configure $(CROSS) \
++			--prefix=/usr \
++			--mandir=\$${prefix}/share/man \
++			--infodir=\$${prefix}/share/info \
++			--with-external-libupnp \
++			--with-external-talloc \
++			CFLAGS="$(CFLAGS)" \
++			LDFLAGS="-Wl,-z,defs,--as-needed" \
++
++
++build: build-stamp
++
++build-stamp:  config.status $(QUILT_STAMPFN)
++	dh_testdir
++	$(MAKE)
++	touch $@
++
++clean: unpatch config.status
++	dh_testdir
++	dh_testroot
++	rm -f build-stamp 
++	rm -f patch-stamp 
++	rm -f config.sub libupnp/config.aux/config.sub 
++	rm -f config.guess libupnp/config.aux/config.guess
++
++	$(MAKE) distclean-libtool
++	[ ! -f Makefile ] || $(MAKE) clean
++
++	rm -f Makefile
++	rm -f config.guess
++	rm -f config.h
++	rm -f config.log
++	rm -f config.status
++	rm -f config.sub
++	rm -f stamp-h1
++	rm -f build-stamp
++	rm -f patch-stamp
++
++	rm -rf djmount/.deps
++	rm -rf djmount/.libs
++	rm -rf djmount/Makefile
++	rm -rf gl/Makefile
++
++	dh_clean 
++
++
++install: build
++	dh_testdir
++	dh_testroot
++	dh_prep  
++	dh_installdirs
++
++	$(MAKE) DESTDIR=$(CURDIR)/debian/djmount install
++	chrpath -d $(CURDIR)/debian/djmount/usr/bin/djmount
++
++
++binary-arch: install
++	dh_testdir
++	dh_testroot
++	dh_installchangelogs ChangeLog
++	dh_installdocs
++	dh_install
++	dh_installman djmount.1
++	dh_link
++	dh_strip
++	dh_compress
++	dh_fixperms
++	dh_installdeb
++	dh_shlibdeps
++	dh_gencontrol
++	dh_md5sums
++	dh_builddeb
++
++binary: binary-indep binary-arch
++.PHONY: build clean binary-indep binary-arch binary install 
+--- djmount-0.71.orig/debian/compat
++++ djmount-0.71/debian/compat
+@@ -0,0 +1 @@
++7
+--- djmount-0.71.orig/debian/control
++++ djmount-0.71/debian/control
+@@ -0,0 +1,18 @@
++Source: djmount
++Section: net
++Priority: extra
++Maintainer: Dario Minnucci <midget@debian.org>
++Build-Depends: quilt (>= 0.40), debhelper (>= 7), autotools-dev, libfuse-dev, libupnp3-dev, libtalloc-dev, chrpath
++Standards-Version: 3.8.4
++Homepage: http://djmount.sourceforge.net/
++Vcs-Browser: http://svn.debian.org/viewsvn/collab-maint/deb-maint/djmount
++Vcs-Svn: svn://svn.debian.org/svn/collab-maint/deb-maint/djmount/trunk
++
++Package: djmount
++Architecture: any
++Depends: fuse-utils, ${shlibs:Depends}, ${misc:Depends}
++Description: file system client for mounting network media servers
++ This package provides a client for Universal Plug'n'Play (UPnP)
++ Audio-Visual MediaServers.  It discovers all compatible UPnP AV
++ devices on the network automatically and mounts their media content
++ as a file system using FUSE.
+--- djmount-0.71.orig/debian/README.source
++++ djmount-0.71/debian/README.source
+@@ -0,0 +1,9 @@
++README.source
++-------------
++
++ The Debian package uses quilt(1) for the modifications of the upstream source.
++ If you want to change something it is best to use the dpatch approach as documented
++ in /usr/share/doc/quilt/README.source
++
++ -- Dario Minnucci <midget@debian.org>  Sun, 24 Jan 2010 02:54:47 +0100
++
+--- djmount-0.71.orig/debian/docs
++++ djmount-0.71/debian/docs
+@@ -0,0 +1,5 @@
++NEWS
++README
++search_help.txt
++THANKS
++TODO
+--- djmount-0.71.orig/debian/changelog
++++ djmount-0.71/debian/changelog
+@@ -0,0 +1,44 @@
++djmount (0.71-3) unstable; urgency=high
++
++  * Applied patch 001-libupnp-1.6.6.diff to handle renaming of function 
++    SetLogFileNames to UpnpSetLogFileNames.
++    Thanks to Nick Leverton for the patch. (Closes: #581879, #582989)
++  * debian/control: Bump Standards-Version to 3.8.4
++  * debian/rules: Changes to get rid of lintian 
++    W: patch-system-but-direct-changes-in-diff
++  * Added debian/source/format file.
++
++ -- Dario Minnucci <midget@debian.org>  Tue, 25 May 2010 14:26:24 +0200
++
++djmount (0.71-2) unstable; urgency=low
++
++  * Patch system migrated from dpatch to quilt
++  * debian/control:
++    - Added quilt support
++    - Maintainer's address updated.
++    - According to Policy 'Section 2.5: Priorities', priority was updated to 
++      extra because depends on 'libupnp3'
++  * debian/copyright: gl/* copyright fixed. Thanks to Chris Lamb.
++  * debian/rules: config.{sub,guess} updated. (Closes: #546298)
++
++ -- Dario Minnucci <midget@debian.org>  Sun, 24 Jan 2010 03:14:54 +0100
++
++djmount (0.71-1) unstable; urgency=low
++
++  * Initial release (Closes: #517762)
++  * debian/rules: Compiled against Debian libupnp-dev and libtalloc-dev
++  * debian/README.source: Added
++  * Improvements on package descrptions and manpage:
++    Thanks to MJ Ray and Justin B Rye.
++    (http://lists.debian.org/debian-l10n-english/2009/08/msg00074.html)
++  * debian/patches/01_manpages.dpatch: Adds a simple manpage not provided by 
++    upstream sources. (djmount.1 was sent to upstream to be included).
++  * debian/control: Added 'Vcs-Browser' and 'Vcs-Svn' fields
++  * debian/patches/01_manpages.dpatch: Adapted to DEP3.
++    (see: http://dep.debian.net/deps/dep3/ for details)
++  * Get rid of lintian W: binary-or-shlib-defines-rpath:
++     debian/control: Added chrpath to Build-Depends 
++     debian/rules: Use chrpath after installing to delete current rpath setting.
++  * debian/copyright: Added a few improvements. 
++
++ -- Dario Minnucci (midget) <debian@midworld.net>  Fri, 11 Sep 2009 01:58:45 +0200
+--- djmount-0.71.orig/debian/watch
++++ djmount-0.71/debian/watch
+@@ -0,0 +1,2 @@
++version=3
++http://sf.net/djmount/djmount-(.+)\.tar\.gz
+--- djmount-0.71.orig/debian/patches/001-libupnp-1.6.6.diff
++++ djmount-0.71/debian/patches/001-libupnp-1.6.6.diff
+@@ -0,0 +1,33 @@
++#
++# Description: Update libupnp API for 1.6.x.
++#   Between libupnp2 and libupnp3 (pupnp 1.4.x and 1.6.x) the function
++#   SetLogFileNames was renamed to UpnpSetLogFileNames.
++# Author: nick@leverton.org
++# Bug-Debian: 581879 
++#
++Index: djmount-0.71/djmount/fuse_main.c
++===================================================================
++--- djmount-0.71.orig/djmount/fuse_main.c	2010-05-16 21:40:56.000000000 +0100
+++++ djmount-0.71/djmount/fuse_main.c	2010-05-16 21:43:55.000000000 +0100
++@@ -616,7 +616,7 @@
++ 	}  
++ 	Log_Colorize (true);
++ #if UPNP_HAVE_DEBUG
++-	SetLogFileNames ("/dev/null", "/dev/null");
+++	UpnpSetLogFileNames ("/dev/null", "/dev/null");
++ #endif
++ 	
++ 	/*
++@@ -710,10 +710,10 @@
++ 					Log_SetMaxLevel (LOG_ERROR);
++ #if UPNP_HAVE_DEBUG
++ 				} else if (strcmp (s, "upnperr") == 0) {
++-					SetLogFileNames ("/dev/stdout", 
+++					UpnpSetLogFileNames ("/dev/stdout",
++ 							 "/dev/null");
++ 				} else if (strcmp (s, "upnpall") == 0) {
++-					SetLogFileNames ("/dev/stdout", 
+++					UpnpSetLogFileNames ("/dev/stdout",
++ 							 "/dev/stdout");
++ #endif
++ 				} else {
+--- djmount-0.71.orig/debian/patches/series
++++ djmount-0.71/debian/patches/series
+@@ -0,0 +1,2 @@
++000_djmount.1.diff
++001-libupnp-1.6.6.diff
+--- djmount-0.71.orig/debian/patches/000_djmount.1.diff
++++ djmount-0.71/debian/patches/000_djmount.1.diff
+@@ -0,0 +1,106 @@
++#
++# Description: Adds djmount.1 manpage which isn't included in original sources.
++# Forwarded: http://sourceforge.net/tracker/index.php?func=detail&aid=2834139&group_id=142039&atid=751320
++# Author: Dario Minnucci <midget@debian.org>
++# Last-Update: 2010-01-24
++#
++diff -urNad djmount-0.71~/djmount.1 djmount-0.71/djmount.1
++--- djmount-0.71~/djmount.1	1970-01-01 01:00:00.000000000 +0100
+++++ djmount-0.71/djmount.1	2009-08-31 19:38:36.289425318 +0200
++@@ -0,0 +1,96 @@
+++.\"                                      Hey, EMACS: -*- nroff -*-
+++.\" First parameter, NAME, should be all caps
+++.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+++.\" other parameters are allowed: see man(7), man(1)
+++.TH DJMOUNT 1 "August 31, 2009"
+++.\" Please adjust this date whenever revising the manpage.
+++.\"
+++.\" Some roff macros, for reference:
+++.\" .nh        disable hyphenation
+++.\" .hy        enable hyphenation
+++.\" .ad l      left justify
+++.\" .ad b      justify to both left and right margins
+++.\" .nf        disable filling
+++.\" .fi        enable filling
+++.\" .br        insert line break
+++.\" .sp <n>    insert n+1 empty lines
+++.\" for manpage-specific macros, see man(7)
+++.SH NAME
+++djmount \- file system client for mounting network media servers
+++.SH SYNOPSIS
+++.B djmount
+++.RI [ options ] " mountpoint"
+++.br
+++.SH DESCRIPTION
+++This manual page describes briefly the
+++.B djmount
+++command.
+++.PP
+++.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+++.\" \fI<whatever>\fP escape sequences to invode bold face and italics,
+++.\" respectively.
+++This package provides a client for Universal Plug'n'Play (UPnP) Audio-Visual MediaServers.  It discovers all compatible UPnP AV devices on the network automatically and mounts their media content as a file system using FUSE.
+++
+++.SH OPTIONS
+++This program follows the usual GNU command line syntax, with long
+++options starting with two dashes (`-').
+++A summary of options is included below.
+++For a complete description, see the Info files.
+++
+++.TP
+++.B \-d[levels]
+++enable debug output (implies \-f)
+++
+++.TP
+++.B \-f
+++foreground operation (default: daemonized)
+++
+++.TP
+++.B \-h, \-\-help
+++print this help, then exit
+++
+++.TP
+++.B \-\-version
+++print version number, then exit
+++
+++.TP
+++.B \-o [options]
+++mount options (see below)
+++
+++
+++.TP
+++Mount options (one or more comma separated options):
+++
+++ iocharset=<charset>    filenames encoding (default: from environment)
+++ playlists              use playlists for AV files, instead of plain files
+++ search_history=<size>  number of remembered searches (default: 100)
+++                        (set to 0 to disable search)
+++
+++.TP
+++See FUSE documentation for the following mount options:
+++
+++ default_permissions    enable permission checking by kernel
+++ allow_other            allow access to other users
+++ allow_root             allow access to root
+++ kernel_cache           cache files in kernel
+++ nonempty               allow mounts over non-empty file/dir
+++ fsname=NAME            set filesystem name in mtab
+++
+++
+++.TP
+++Debug levels are one or more comma separated words:
+++
+++ upnperr, upnpall: increasing level of UPnP traces
+++ error, warn, info, debug: increasing level of djmount traces
+++ fuse: activates FUSE traces
+++ leak, leakfull: enable talloc leak reports at exit
+++ '\-d' alone defaults to 'upnpall, debug, fuse, leak' which is all traces.
+++
+++
+++.SH SEE ALSO
+++.BR fusermount (1)
+++.SH AUTHOR
+++djmount was written by Rémi Turboult <r3mi@users.sourceforge.net>.
+++.PP
+++This manual page was written by Dario Minnucci <midget@debian.org>,
+++for the Debian project (and may be used by others).
+--- djmount-0.71.orig/debian/source/format
++++ djmount-0.71/debian/source/format
+@@ -0,0 +1 @@
++1.0

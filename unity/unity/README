@@ -1,0 +1,12 @@
+When removing you'll want to run
+
+SCHEMAS="compiz-networkarearegion.schemas compiz-unitydialog.schemas 
+compiz-unitymtgrabhandles.schemas compiz-unityshell.schemas"
+
+pre-removal:
+gconf-schemas --unregister ${SCHEMAS}
+if [ -f /usr/share/ccsm/icons/hicolor/icon-theme.cache ]; then
+  rm /usr/share/ccsm/icons/hicolor/icon-theme.cache
+fi
+
+

@@ -1,0 +1,12 @@
+PRGNAM="gnome-settings-daemon"
+VERSION="3.12.2"
+HOMEPAGE=""
+DOWNLOAD="http://ftp.gnome.org/pub/gnome/sources/gnome-settings-daemon/3.12/gnome-settings-daemon-3.12.2.tar.xz \  
+	http://ppa.launchpad.net/gnome3-team/gnome3-staging/ubuntu/pool/main/g/gnome-settings-daemon/gnome-settings-daemon_3.12.2-0ubuntu1~trusty3.debian.tar.xz"
+MD5SUM="63b053c499e73e522b316c54224b22dc \  
+	f333b94a329d976d05954a461cace1d3"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="%BuildOrder%"
+MAINTAINER="Macius Kuzmin"
+EMAIL="szczecinska.duma@gmail.com"

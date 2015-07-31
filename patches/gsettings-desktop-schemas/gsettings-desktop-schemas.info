@@ -1,0 +1,12 @@
+PRGNAM="gsettings-desktop-schemas"
+VERSION="3.12.2"
+HOMEPAGE=""
+DOWNLOAD="http://ftp.gnome.org/pub/gnome/sources/gsettings-desktop-schemas/3.12/gsettings-desktop-schemas-3.12.2.tar.xz \
+	https://launchpad.net/ubuntu/utopic/+source/gsettings-desktop-schemas/3.10.1-0ubuntu1/+files/gsettings-desktop-schemas_3.10.1-0ubuntu1.debian.tar.gz"
+MD5SUM="9f68571f20369a008d14b42a648568b5 \
+	fa2cea4d9f42e4ac165748c0be5214b0"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="%README%"
+MAINTAINER="Macius Kuzmin"
+EMAIL="szczecinska.duma@gmail.com"

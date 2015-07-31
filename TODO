@@ -1,0 +1,29 @@
+explore nux: *** Warning: Linking the shared library libnux-4.0.la against the static 
+library /usr/lib/libz.a is not portable!
+
+explore a cleaner solution to have hud finding libgsettings-qt.so; the current solution soft 
+linking /usr/lib/qt5/lib/libgsettings-qt.so.1.0.0 library to /usr/lib/
+
+merge existing duplicate build scripts caused with the inclusion of pam
+
+maybe merge some unstable build scripts due to pam reliance (since vbatts pam is needed by unity 
+itself anyway)
+
+bamf needs to be edited since bamwatcher.c relies on pacman
+
+gnome-session-ubuntu might explicitly need to ignore wayland
+
+colord needs to include README specifying the creation of a user (look at SlackBuild)
+
+compiz "might" need a SlackBuild relook
+
+gnome-control-center "might" need to be relooked (look at SlackBuild)
+
+libindicator "might" SlackBuild might need to be relooked; both withgtk3 and withgtk2 install 
+in the same path.. check all other packges with build incase the same issues exists
+
+unity "might" need to be looked over (CMake is a headach) && chrpath
+
+unity-language-packs "might" need a SlackBuild relook
+
+check all the find ops in SlackBuilds (fix anything that was simply failing due to missing \;)

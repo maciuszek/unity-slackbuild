@@ -1,0 +1,6 @@
+Gfire is an advanced open-source Xfire plugin for the popular Pidgin IM client.
+It allows you to connect and communicate on the Xfire network, using the Pidgin IM client. You can now IM all your Xfire friends, as well as on MSN, 
+Yahoo, AIM and many more!
+Why have a separate Xfire client to use Xfire, why not have all your IM accounts in one place!
+
+This requires purple-plugin_pack, Glib2 ( needed version found in gsb repo ) and GTK+2 ( needed version found in gsb repo ).

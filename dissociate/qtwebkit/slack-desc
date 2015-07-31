@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+           |-----handy-ruler------------------------------------------------------|
+qtwebkit: QTWebkit (The Qt port of WebKit)
+qtwebkit: 
+qtwebkit: WebKit is an open source web browser engine. WebKit's HTML and JavaScript 
+qtwebkit: code began as a branch of the KHTML and KJS libraries from KDE. As part 
+qtwebkit: of KDE framework KHTML was based on Qt but during their porting efforts
+qtwebkit: Apple's engineers made WebKit toolkit independent. QtWebKit is a project 
+qtwebkit: aiming at porting this fabulous engine back to Qt.
+qtwebkit:
+qtwebkit:
+qtwebkit: Homepage: https://trac.webkit.org/wiki/QtWebKit
+qtwebkit:

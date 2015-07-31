@@ -1,0 +1,12 @@
+PRGNAM="nautilus"
+VERSION="3.12.2"
+HOMEPAGE=""
+DOWNLOAD="http://ftp.gnome.org/pub/gnome/sources/nautilus/3.12/nautilus-3.12.2.tar.xz \  
+	http://ppa.launchpad.net/gnome3-team/gnome3-staging/ubuntu/pool/main/n/nautilus/nautilus_3.12.2-0ubuntu1~trusty2.debian.tar.xz"
+MD5SUM="cc802f9b49504b8ca5f5ec11fd4418c6 \  
+	3a5233710388590db753348d9b88ca13"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="%BuildOrder%"
+MAINTAINER="Macius Kuzmin"
+EMAIL="szczecinska.duma@gmail.com"

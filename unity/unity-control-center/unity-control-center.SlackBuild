@@ -1,0 +1,134 @@
+#!/bin/sh
+
+# Slackware build script for unity-control-center
+
+# Copyright 2014 Matthew Kuzminski Toronto, ON
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+PRGNAM=unity-control-center # replace with name of program
+VERSION=${VERSION:-14.04.3+14.04.20140328} # replace with version of program
+BUILD=${BUILD:-1}
+TAG=${TAG:-_uSB}
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+case "$( uname -m )" in
+i?86) ARCH=i486 ;;
+arm*) ARCH=arm ;;
+# Unless $ARCH is already set, use uname -m for all other archs:
+*) ARCH=$( uname -m ) ;;
+esac
+fi
+
+CWD=$(pwd)
+TMP=${TMP:-/tmp/build}
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp} # Drop the package in /tmp
+
+if [ "$ARCH" = "i486" ]; then
+SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+SLKCFLAGS="-O2 -fPIC"
+LIBDIRSUFFIX="64"
+else
+SLKCFLAGS="-O2"
+LIBDIRSUFFIX=""
+fi
+
+set -e # Exit on most errors
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf unity-control-center-14.04.3+14.04.20140328
+tar xvf $CWD/unity-control-center_14.04.3+14.04.20140328.orig.tar.gz
+cd unity-control-center-14.04.3+14.04.20140328
+chown -R root:root .
+#find -L . ( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 ) -exec chmod 755 {} ; -o ( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 ) -exec chmod 644 {} ;
+
+git init
+git add .
+git config user.email dummy@dummy
+git config user.name dummy
+git commit -m 'Initial commit'
+git am "$CWD/0001-Remove-Bluetooth-panel.patch"
+git am "$CWD/0002-Remove-Wacom-panel.patch"
+git am "$CWD/0003-Remove-Color-panel.patch"
+git am "$CWD/0004-Remove-Printers-panel.patch"
+git am "$CWD/0005-Remove-Keyboard-panel.patch"
+git am "$CWD/0006-Remove-Network-panel.patch"
+git am "$CWD/0007-Remove-Power-panel.patch"
+git am "$CWD/0008-Remove-Region-panel.patch"
+git am "$CWD/0009-Remove-Display-panel.patch"
+git am "$CWD/0010-Remove-User-Accounts-panel.patch"
+git am "$CWD/0011-Remove-Universal-Access-panel.patch"
+git am "$CWD/0012-Remove-Info-panel.patch"
+git am "$CWD/0013-Remove-Mouse-panel.patch"
+git am "$CWD/0014-Remove-Screen-panel.patch"
+git am "$CWD/0015-Remove-Sound-panel.patch"
+git am "$CWD/0016-Remove-Ubuntu-specific-language-code.patch"
+git am "$CWD/0017-Remove-Ubuntu-help-links.patch"
+git am "$CWD/0018-Launch-gnome-control-center-if-no-arguments.patch"
+git am "$CWD/0019-Hide-navigation-bar.patch"
+
+autoreconf -vfi
+intltoolize -f
+
+./configure \
+  --prefix=/usr \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --libexecdir=/usr/lib/unity-control-center \
+  --disable-static 
+#  --enable-systemd
+
+# https://bugzilla.gnome.org/show_bug.cgi?id=656229
+#sed -i -e 's/ -shared / -Wl,-O1,--as-needed0 /g' -e 's/ if test "$export_dynamic" = yes && test -n "$export_dynamic_flag_spec"; then/ func_append compile_command " -Wl,-O1,--as-needed"n func_append finalize_command " -Wl,-O1,--as-needed"n0/' libtool
+
+make
+
+make DESTDIR="$PKG" install
+
+# Fix a warning
+# chown 102:0 "$PKG/usr/share/polkit-1/rules.d/"
+chmod 700 "$PKG/usr/share/polkit-1/rules.d/"
+
+# Use language packs
+rm -r "$PKG/usr/share/locale/"
+
+rm "$PKG"/usr/share/applications/unity-control-center.desktop
+
+find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+# cp -a # <documentation> # $PKG/usr/doc/$PRGNAM-$VERSION
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+#cat $CWD/setup.$PKGNAM > $PKG/var/log/setup/setup.$PKGNAM
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

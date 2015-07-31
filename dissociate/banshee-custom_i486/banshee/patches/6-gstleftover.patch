@@ -1,0 +1,37 @@
+From ea128c28c2fc167039cfbe1a8ae489c55fa55c0e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Andr=C3=A9s=20G=2E=20Aragoneses?= <knocte@gmail.com>
+Date: Thu, 24 Oct 2013 11:20:29 +0200
+Subject: libbanshee: remove leftover from the port to Gst1.0 (stream-changed)
+
+When porting this backend to GStreamer 1.0 [1], a new switch case
+was introduced for the GST_MESSAGE_STREAM_START message type, but
+removing the old way[2] of catching this event (via another message
+of type _ELEMENT with a "playbin2-stream-change" structure name)
+was not done. For reference, this change in GStreamer happened in
+this commit [3].
+
+This should be considered as part of BGO#679433 too.
+
+[1] https://git.gnome.org/browse/banshee/commit/?id=e40923df1bc55129832dff5ca2c782f5040b412f
+[2] https://git.gnome.org/browse/banshee/commit/?id=b1519fded83eab0f0d2dba821dcecf802f54490b
+[3] http://cgit.freedesktop.org/gstreamer/gst-plugins-base/commit/?id=a0fbf92d43e81452b6cce09ee20d9a8cc4af7b06
+
+diff --git a/libbanshee/banshee-player-pipeline.c b/libbanshee/banshee-player-pipeline.c
+index 1222142..4817887 100644
+--- a/libbanshee/banshee-player-pipeline.c
++++ b/libbanshee/banshee-player-pipeline.c
+@@ -208,11 +208,6 @@ bp_pipeline_bus_callback (GstBus *bus, GstMessage *message, gpointer userdata)
+         } 
+         
+         case GST_MESSAGE_ELEMENT: {
+-            const GstStructure *messageStruct;
+-            messageStruct = gst_message_get_structure (message);
+-            if (GST_MESSAGE_SRC (message) == GST_OBJECT (player->playbin) && gst_structure_has_name (messageStruct, "playbin2-stream-changed")) {
+-                bp_next_track_starting (player);
+-            }
+             _bp_missing_elements_process_message (player, message);
+             _bp_dvd_elements_process_message (player, message);
+             break;
+-- 
+cgit v0.10.1
+

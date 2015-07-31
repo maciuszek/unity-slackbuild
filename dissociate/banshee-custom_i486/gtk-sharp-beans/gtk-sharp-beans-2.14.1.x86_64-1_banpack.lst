@@ -1,0 +1,32 @@
+++========================================
+||
+||   Package:  ./SlackBuilds/gtk-sharp-beans/gtk-sharp-beans-2.14.1.x86_64-1_banpack.txz
+||
+++========================================
+drwxr-xr-x root/root         0 2012-07-05 21:50 ./
+drwxr-xr-x root/root         0 2012-07-05 21:50 install/
+-rw-r--r-- root/root       160 2012-07-05 21:50 install/doinst.sh
+-rw-r--r-- root/root       843 2012-07-05 21:50 install/slack-desc
+drwxr-xr-x root/root         0 2012-07-05 21:50 usr/
+drwxr-xr-x root/root         0 2012-07-05 21:50 usr/doc/
+drwxr-xr-x root/root         0 2012-07-05 21:50 usr/doc/gtk-sharp-beans-2.14.1/
+-rw-r--r-- root/root      9512 2010-09-01 21:33 usr/doc/gtk-sharp-beans-2.14.1/INSTALL
+drw-r--r-- root/root         0 2012-07-05 21:50 usr/doc/gtk-sharp-beans-2.14.1/SlackBuild/
+-rw-r--r-- root/root       843 2012-07-05 21:50 usr/doc/gtk-sharp-beans-2.14.1/SlackBuild/slack-desc
+-rw-r--r-- root/root      4520 2012-07-05 21:50 usr/doc/gtk-sharp-beans-2.14.1/SlackBuild/gtk-sharp-beans.SlackBuild
+-rw-r--r-- root/root       598 2010-09-01 21:03 usr/doc/gtk-sharp-beans-2.14.1/README
+-rw-r--r-- root/root         0 2009-08-06 23:05 usr/doc/gtk-sharp-beans-2.14.1/ChangeLog
+-rw-r--r-- root/root        43 2009-08-06 23:05 usr/doc/gtk-sharp-beans-2.14.1/AUTHORS
+-rw-r--r-- root/root     26430 2009-08-06 23:05 usr/doc/gtk-sharp-beans-2.14.1/COPYING
+-rw-r--r-- root/root       334 2010-09-02 00:14 usr/doc/gtk-sharp-beans-2.14.1/NEWS
+drwxr-xr-x root/root         0 2012-07-05 21:50 usr/lib/
+drwxr-xr-x root/root         0 2012-07-05 21:50 usr/lib/pkgconfig/
+-rw-r--r-- root/root       481 2012-07-05 21:50 usr/lib/pkgconfig/gtk-sharp-beans-2.0.pc
+drwxr-xr-x root/root         0 2012-07-05 21:50 usr/lib/gtk-sharp-beans/
+-rw-r--r-- root/root       437 2012-07-05 21:50 usr/lib/gtk-sharp-beans/gtk-sharp-beans.dll.config
+-rw-r--r-- root/root      8410 2012-07-05 21:50 usr/lib/gtk-sharp-beans/gtk-sharp-beans.dll.mdb
+-rw-r--r-- root/root     22528 2012-07-05 21:50 usr/lib/gtk-sharp-beans/gtk-sharp-beans.dll
+drwxr-xr-x root/root         0 2012-07-05 21:50 usr/lib64/
+drwxr-xr-x root/root         0 2012-07-05 21:50 usr/lib64/pkgconfig/
+
+

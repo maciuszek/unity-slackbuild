@@ -1,0 +1,147 @@
+#!/bin/sh
+
+# Slackware build script for gnome-control-center
+
+# Copyright 2014 Matthew Kuzminski Toronto, ON
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+PRGNAM=gnome-control-center # replace with name of program
+VERSION=${VERSION:-3.12.1} # replace with version of program
+BUILD=${BUILD:-1}
+TAG=${TAG:-_uSB}
+
+# Automatically determine the architecture we're building on:
+if [ -z "$ARCH" ]; then
+case "$( uname -m )" in
+i?86) ARCH=i486 ;;
+arm*) ARCH=arm ;;
+# Unless $ARCH is already set, use uname -m for all other archs:
+*) ARCH=$( uname -m ) ;;
+esac
+fi
+
+CWD=$(pwd)
+TMP=${TMP:-/tmp/build}
+PKG=$TMP/package-$PRGNAM
+OUTPUT=${OUTPUT:-/tmp} # Drop the package in /tmp
+
+if [ "$ARCH" = "i486" ]; then
+SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "i686" ]; then
+SLKCFLAGS="-O2 -march=i686 -mtune=i686"
+LIBDIRSUFFIX=""
+elif [ "$ARCH" = "x86_64" ]; then
+SLKCFLAGS="-O2 -fPIC"
+LIBDIRSUFFIX="64"
+else
+SLKCFLAGS="-O2"
+LIBDIRSUFFIX=""
+fi
+
+set -e # Exit on most errors
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf gnome-control-center-3.12.1
+tar xvf $CWD/gnome-control-center-3.12.1.tar.xz
+cd gnome-control-center-3.12.1
+chown -R root:root .
+#find -L . ( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 -o -perm 511 ) -exec chmod 755 {} ; -o ( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 ) -exec chmod 644 {} ;
+
+patch -p1 -i "$CWD/0001-Remove-overlay-scrollbar-from-GTK_MODULES.patch"
+patch -p1 -i "$CWD/0002-Reimplement-support-for-loading-external-panels.patch"
+
+tar xvf "$CWD/gnome-control-center_3.12.1-0ubuntu1~trusty1.debian.tar.gz"
+
+# Apply Ubuntu's patches
+# Disable patches
+# Why?
+sed -i '/revert_git_new_bluetooth_panel.patch/d' "debian/patches/series"
+sed -i '/05_run_update_manager.patch/d' "debian/patches/series"
+# Ubuntu specific
+sed -i '/52_region_language.patch/d' "debian/patches/series"
+sed -i '/52_ubuntu_language_list_mods.patch/d' "debian/patches/series"
+sed -i '/53_use_ubuntu_help.patch/d' "debian/patches/series"
+sed -i '/55_user_accounts_hide_controls.patch/d' "debian/patches/series"
+sed -i '/56_use_ubuntu_info_branding.patch/d' "debian/patches/series"
+sed -i '/59_install_gcm_components_on_demand.patch/d' "debian/patches/series"
+sed -i '/61_workaround_online_account.patch/d' "debian/patches/series"
+sed -i '/62_update_translations_template.patch/d' "debian/patches/series"
+sed -i '/91_unity_no_printing_panel.patch/d' "debian/patches/series"
+sed -i '/92_ubuntu_system_proxy.patch/d' "debian/patches/series"
+sed -i '/revert_git_info_packagekit_api.patch/d' "debian/patches/series"
+sed -i '/ubuntu_region_packagekit.patch/d' "debian/patches/series"
+sed -i '/zz_add_fallback_panels_dir.patch/d' "debian/patches/series"
+sed -i '/ubuntu_external_panels.patch/d' "debian/patches/series"
+# There are currently no packages compatible with this library (assuming it even works)
+sed -i '/revert_git_drop_library.patch/d' "debian/patches/series"
+# We have gnome-bluetooth 3.12
+sed -i '/revert_new_bluetooth.patch/d' "debian/patches/series"
+# We also have BlueZ 5
+sed -i '/revert-bluetooth-BlueZ5-interface.patch/d' "debian/patches/series"
+
+for i in $(grep -v '#' "debian/patches/series"); do
+patch -p1 -i "debian/patches/${i}"
+done
+
+autoreconf -vfi
+
+PATH=$PATH:/usr/kerberos/bin
+./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var --libexecdir=/usr/lib/gnome-control-center --disable-static --disable-silent-rules
+
+# https://bugzilla.gnome.org/show_bug.cgi?id=656229
+#sed -i -e 's/ -shared / -Wl,-O1,--as-needed0 /g' -e 's/ if test "$export_dynamic" = yes && test -n "$export_dynamic_flag_spec"; then/ func_append compile_command " -Wl,-O1,--as-needed"n func_append finalize_command " -Wl,-O1,--as-needed"n0/' libtool
+
+make
+
+make DESTDIR="$PKG" install
+
+# Fix a warning
+# chown 102:0 "$PKG/usr/share/polkit-1/rules.d/"
+chmod 700 "$PKG/usr/share/polkit-1/rules.d/"
+
+# Ubuntu specific files
+install -dm755 "$PKG/usr/share/indicators/session/applications/"
+ln -s '/usr/share/applications/gnome-control-center.desktop' "$PKG/usr/share/indicators/session/applications/gnome-control-center.desktop"
+
+# Install legal notice
+install -m644 "debian/searchingthedashlegalnotice.html" "$PKG/usr/share/gnome-control-center/"
+
+# Make the Region panel show up in Unity
+desktop-file-install --dir "$PKG/usr/share/applications/" --add-only-show-in=Unity "$PKG/usr/share/applications/gnome-region-panel.desktop"
+
+# Hide Displays panel in Unity (it only works with gnome-shell)
+desktop-file-install --dir "$PKG/usr/share/applications/" --remove-only-show-in=Unity "$PKG/usr/share/applications/gnome-display-panel.desktop"
+
+find $PKG -print0 | xargs -0 file | grep -e "executable" -e "shared object" | grep ELF | cut -f 1 -d : | xargs strip --strip-unneeded 2> /dev/null || true
+
+mkdir -p $PKG/usr/doc/$PRGNAM-$VERSION
+# cp -a # <documentation> # $PKG/usr/doc/$PRGNAM-$VERSION
+cat $CWD/$PRGNAM.SlackBuild > $PKG/usr/doc/$PRGNAM-$VERSION/$PRGNAM.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+#cat $CWD/setup.$PKGNAM > $PKG/var/log/setup/setup.$PKGNAM
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PRGNAM-$VERSION-$ARCH-$BUILD$TAG.${PKGTYPE:-txz}

@@ -1,0 +1,23 @@
+diff -U 3 -H -d -r -N -- a/build/m4/extensions/streamrecorder.m4 b/build/m4/extensions/streamrecorder.m4
+--- a/build/m4/extensions/streamrecorder.m4	2015-06-14 18:59:27.398834546 +0200
++++ b/build/m4/extensions/streamrecorder.m4	2015-06-14 18:58:31.626838451 +0200
+@@ -3,6 +3,9 @@
+ 	BCE_ARG_DISABLE([StreamRecorder], [yes])
+ 
+ 	if test "x$enable_StreamRecorder" = "xyes"; then
++		SHAMROCK_FIND_PROGRAM_OR_BAIL(SED, sed)
++ 		OLD_GLIB="`$PKG_CONFIG --libs glib-sharp-2.0 | $SED -e 's/-r:/-r:oldGlib=/g'`"
++                AC_SUBST(OLD_GLIB)
+ 		AM_CONDITIONAL(ENABLE_STREAMRECORDER, true)
+ 	else
+ 		AM_CONDITIONAL(ENABLE_STREAMRECORDER, false)
+diff -U 3 -H -d -r -N -- a/src/StreamRecorder/Makefile.am b/src/StreamRecorder/Makefile.am
+--- a/src/StreamRecorder/Makefile.am	2015-06-14 19:02:22.441822291 +0200
++++ b/src/StreamRecorder/Makefile.am	2015-06-14 18:59:04.679836136 +0200
+@@ -1,6 +1,5 @@
+ ASSEMBLY = Banshee.Streamrecorder
+ 
+-OLD_GLIB = -r:oldGlib=${expanded_libdir}/pkgconfig/../../lib/cli/glib-sharp-2.0/glib-sharp.dll
+ LINK = $(BANSHEE_LIBS) $(OLD_GLIB)
+ 
+ GMCS_FLAGS = -unsafe

@@ -1,0 +1,12 @@
+PRGNAM="gtk+2"
+VERSION="2.24.23"
+HOMEPAGE=""
+DOWNLOAD="http://ftp.gnome.org/pub/gnome/sources/gtk+/2.24/gtk+-2.24.23.tar.xz \
+	https://launchpad.net/ubuntu/+archive/primary/+files/gtk+2.0_2.24.23-0ubuntu1.debian.tar.gz"
+MD5SUM="0be39fbed4ca125645175cd6e22f2548 \
+	f4ad7af1a7e2435b6f3553ff11fda3f8"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="%README%"
+MAINTAINER="Macius Kuzmin"
+EMAIL="szczecinska.duma@gmail.com"

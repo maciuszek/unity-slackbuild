@@ -1,0 +1,12 @@
+PRGNAM="unity-scope-home"
+VERSION="6.8.2.14.04.20131029.1"
+HOMEPAGE=""
+DOWNLOAD="https://launchpad.net/ubuntu/+archive/primary/+files/unity-scope-home_6.8.2+14.04.20131029.1.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/ubuntu-sso-client_13.10.orig.tar.gz"
+MD5SUM="e93cc06634864ed5a1d15e24b0c73fad \  
+	2937163edb8ba06038fa0036c5c34c99"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="%BuildOrder%"
+MAINTAINER="Macius Kuzmin"
+EMAIL="szczecinska.duma@gmail.com"

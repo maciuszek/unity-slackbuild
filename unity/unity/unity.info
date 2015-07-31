@@ -1,0 +1,12 @@
+PRGNAM="unity"
+VERSION="7.2.0.14.04.20140423"
+HOMEPAGE=""
+DOWNLOAD="https://launchpad.net/ubuntu/+archive/primary/+files/unity_7.2.0+14.04.20140423.orig.tar.gz \  
+	https://launchpad.net/ubuntu/+archive/primary/+files/unity_7.2.0+14.04.20140423-0ubuntu1.2.diff.gz"
+MD5SUM="37482492f49fae44bcb39db70920889e \  
+	e34b3c7f6b52a8d426ae7334f151cf0f"
+DOWNLOAD_x86_64=""
+MD5SUM_x86_64=""
+REQUIRES="%BuildOrder%"
+MAINTAINER="Macius Kuzmin"
+EMAIL="szczecinska.duma@gmail.com"

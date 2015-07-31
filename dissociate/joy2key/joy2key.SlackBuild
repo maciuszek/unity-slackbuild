@@ -1,0 +1,73 @@
+#!/bin/sh -e
+# macius kuzminski revision date 2011/03/05
+
+APP=joy2key
+CWD=$(pwd)
+VERSION=1.6.3
+
+if [ -z "$ARCH" ]; then
+  case "$( uname -m )" in
+    i?86) ARCH=i486 ;;
+    arm*) ARCH=arm ;;
+    # Unless $ARCH is already set, use uname -m for all other archs:
+       *) ARCH=$( uname -m ) ;;
+  esac
+fi
+
+TMP=${TMP:-/tmp/mK}
+PKG_VERSION=0.9.4
+BUILD=${BUILD:-1_mK}
+PKG=$TMP/package-$APP
+OUTPUT=${OUTPUT:-/tmp}
+
+if [ "$ARCH" = "i486" ]; then
+  SLKCFLAGS="-O2 -march=i486 -mtune=i686"
+elif [ "$ARCH" = "x86_64" ]; then
+  SLKCFLAGS="-O2 -fPIC"
+else
+  SLKCFLAGS="-O2"
+fi
+
+rm -rf $PKG 
+mkdir -p $TMP $PKG
+rm -rf $TMP/$APP-$VERSION
+
+cd $TMP || exit 1
+ 
+tar -jxvf $CWD/$APP-$VERSION.tar.bz2 || exit 1
+cd $APP-$VERSION || exit 1
+ 
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+CFLAGS="$SLKCFLAGS" \
+  ./configure \
+  --prefix=/usr \
+  --sysconfdir=/etc \
+  --localstatedir=/var \
+  --build=$ARCH-slackware-linux
+
+make || exit
+make install DESTDIR=$PKG || exit
+
+mkdir -p $PKG/usr/doc/$APP-$VERSION
+cat $CWD/$APP.SlackBuild > $PKG/usr/doc/$APP-$VERSION/$APP.SlackBuild
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+if [ -d $PKG/usr/man ]; then
+  ( cd $PKG/usr/man
+  find . -type f -exec gzip -9 {} \;
+  for i in $(find . -type l) ; do ln -s $(readlink $i).gz $i.gz ; rm $i ; done
+  ) 
+fi
+
+if [ -d $PKG/usr/info ]; then
+  gzip -9 $PKG/usr/info/*.info
+  rm -f $PKG/usr/info/dir
+fi
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$APP-$PKG_VERSION-$ARCH-$BUILD.tgz

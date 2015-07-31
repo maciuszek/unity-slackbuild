@@ -1,0 +1,21 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+      |-----handy-ruler------------------------------------------------------|
+joy2key: joy2key
+joy2key:
+joy2key: This software is a keyboard emulator for joysticks.
+joy2key: It converts joystick input into keyboard input (and mouse input).
+joy2key: 
+joy2key: Use it when you want to control an application with joysticks that 
+joy2key: doesn't support joystick input. If you wish, you can control even 
+joy2key: Word, Excel, etc. with joysticks! 
+joy2key: that doesn't support joystick input. If you wish, you can 
+joy2key: control even Word, Excel, etc. with joysticks!
+joy2key: 
+joy2key: Homepage: http://http://www.electracode.com/4/joy2key/
+joy2key: JoyToKey%20English%20Version.htm
