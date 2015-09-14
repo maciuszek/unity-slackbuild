@@ -1,0 +1,9 @@
+The Gopher protocol is a TCP/IP application layer protocol 
+designed for distributing, searching, and retrieving documents 
+over the Internet. The Gopher protocol was strongly oriented 
+towards a menu-document design and presented an alternative to 
+the World Wide Web in its early stages, but ultimately HTTP 
+became the dominant protocol. The Gopher ecosystem is often 
+regarded as the effective predecessor of the World Wide Web.
+
+This is the historic gopher client held in the ubuntu archives.
