@@ -49,19 +49,19 @@ find . \
  \( -perm 666 -o -perm 664 -o -perm 600 -o -perm 444 -o -perm 440 -o -perm 400 \) \
  -exec chmod 644 {} \;
 
-mkdir -p "$PKG/usr/lib"
+mkdir -p "$PKG/usr/lib$LIBDIRSUFFIX"
 mkdir -p "$PKG/etc/udev/rules.d/"
 
 install -m 755 "cdroot/Linux/$ARCH/at_root/usr/lib$LIBDIRSUFFIX/libmfp.so.1.0.1" \
-"$PKG/usr/lib/libmfp.so.1.0.1"
+"$PKG/usr/lib${LIBDIRSUFFIX}/libmfp.so.1.0.1"
 install -m 755 "cdroot/Linux/$ARCH/at_root/opt/smfp-common/lib$LIBDIRSUFFIX/libnetsnmp.so.10.0.2" \
-"$PKG/usr/lib/libnetsnmp.so.10.0.2"
+"$PKG/usr/lib${LIBDIRSUFFIX}/libnetsnmp.so.10.0.2"
 
 install -m 644 "$CWD/98_smfpautoconf.rules" "$PKG/etc/udev/rules.d/98_smfpautoconf.rules"
 install -m 644 "$CWD/99_smfpautoconf.rules" "$PKG/etc/udev/rules.d/99_smfpautoconf.rules"
 
-mkdir -p "$PKG/usr/lib/cups/filter"
-mkdir -p "$PKG/usr/lib/cups/backend/"
+mkdir -p "$PKG/usr/lib${LIBDIRSUFFIX}/cups/filter"
+mkdir -p "$PKG/usr/lib${LIBDIRSUFFIX}/cups/backend/"
 mkdir -p "$PKG/etc/cups/"
 mkdir -p "$PKG/usr/share/cups/model/samsung/cms"
 
@@ -70,30 +70,30 @@ install -m 644 -t "$PKG/usr/share/cups/model/" cdroot/Linux/noarch/at_opt/share/
 	
 
 install -m 755 "cdroot/Linux/$ARCH/at_root/usr/lib$LIBDIRSUFFIX/cups/backend/mfp" \
-"$PKG/usr/lib/cups/backend/mfp"
-install -m 755 -t "$PKG/usr/lib/cups/filter/" cdroot/Linux/$ARCH/at_root/usr/lib$LIBDIRSUFFIX/cups/filter/*
+"$PKG/usr/lib${LIBDIRSUFFIX}/cups/backend/mfp"
+install -m 755 -t "$PKG/usr/lib${LIBDIRSUFFIX}/cups/filter/" cdroot/Linux/$ARCH/at_root/usr/lib$LIBDIRSUFFIX/cups/filter/*
 
 install -m 755 "cdroot/Linux/$ARCH/at_root/usr/lib$LIBDIRSUFFIX/cups/filter/smfpautoconf" \
-"$PKG/usr/lib/cups/filter/smfpautoconf"
+"$PKG/usr/lib${LIBDIRSUFFIX}/cups/filter/smfpautoconf"
 
 
 install -m 644 -t "$PKG/etc/cups/" cdroot/Linux/noarch/at_root/etc/cups/*
 
-mkdir -p "$PKG/usr/lib/sane/"
+mkdir -p "$PKG/usr/lib${LIBDIRSUFFIX}/sane/"
 mkdir -p "$PKG/etc/sane.d/"
 
 install -m 644 "cdroot/Linux/noarch/at_root/etc/sane.d/smfp.conf" "$PKG/etc/sane.d/smfp.conf"
 
 install -m 755 "cdroot/Linux/$ARCH/at_root/usr/lib$LIBDIRSUFFIX/sane/libsane-smfp.so.1.0.1" \
-"$PKG/usr/lib/sane/libsane-smfp.so.1.0.1"
+"$PKG/usr/lib${LIBDIRSUFFIX}/sane/libsane-smfp.so.1.0.1"
 
 # Linking
-( cd "$PKG/usr/lib"
+( cd "$PKG/usr/lib$LIBDIRSUFFIX"
   ln -s libmfp.so.1.0.1 libmfp.so.1
   ln -s libmfp.so.1.0.1 libmfp.so
   ln -s libnetsnmp.so.10.0.2 libnetsnmp.so.10 )
 
-( cd "$PKG/usr/lib/sane"  
+( cd "$PKG/usr/lib${LIBDIRSUFFIX}/sane"  
   ln -s libsane-smfp.so.1.0.1 libsane-smfp.so.1
   ln -s libsane-smfp.so.1 libsane-smfp.so )
 
