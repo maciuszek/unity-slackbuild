@@ -1,0 +1,7 @@
+This module is yet another (?) parser and tree-builder for Perl regular expressions. It builds a tree out of a regex, 
+but at the moment, the extent of the extraction tool for the tree is quite limited. However, the tree can be useful 
+to extension modules.
+
+The YAPE hierarchy of modules is an attempt at a unified means of parsing and extracting content. It attempts to 
+maintain a generic interface, to promote simplicity and reusability. The API is powerful, yet simple. The modules do 
+tokenization (which can be intercepted) and build trees, so that extraction of specific nodes is doable.

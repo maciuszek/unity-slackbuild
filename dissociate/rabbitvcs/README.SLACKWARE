@@ -1,0 +1,10 @@
+To install for thunar:
+mkdir -p /usr/lib${LIBDIRSUFFIX}/thunarx-2/python
+cp /usr/share/rabbitvcs/clients/thunar/RabbitVCS.py /usr/lib${LIBDIRSUFFIX}/thunarx-2/python/
+
+To install for dolphin:
+mkdir -p /usr/share/kde4/services/ServiceMenus/
+cp /usr/share/rabbitvcs/clients/dolphin/*.desktop /usr/share/kde4/services/ServiceMenus/
+
+To install for nautlius3:
+cp /usr/share/rabbitvcs/clients/nautilus-3.0/RabbitVCS.py /usr/share/nautilus-python/extensions

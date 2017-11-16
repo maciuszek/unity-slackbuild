@@ -1,0 +1,6 @@
+This module merely sub-classes YAPE::Regex, and produces a rather verbose explanation of a regex, suitable for 
+demonstration and tutorial purposes.
+
+The YAPE hierarchy of modules is an attempt at a unified means of parsing and extracting content. It attempts to 
+maintain a generic interface, to promote simplicity and reusability. The API is powerful, yet simple. The modules do 
+tokenization (which can be intercepted) and build trees, so that extraction of specific nodes is doable.

@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|'
+# on the right side marks the last column you can put a character in.  You must
+# make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':'.
+
+     |-----handy-ruler------------------------------------------------------|
+xampp: xampp
+xampp:
+xampp: A free and open source cross-platform web server package 
+xampp: (LAMP Stack), consisting mainly of the Apache HTTP Server, 
+xampp: MySQL database, and interpreters for scripts written in the 
+xampp: PHP and Perl programming languages.
+xampp:
+xampp:
+xampp: Homepage: http://www.apachefriends.org/ 
+xampp:
+xampp:

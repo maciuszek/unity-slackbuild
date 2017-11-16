@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+                  |-----handy-ruler------------------------------------------------------|
+YAPE-Regex: YAPE-Regex (Yet Another Parser/Extractor for Regular Expressions)
+YAPE-Regex:
+YAPE-Regex: This module is yet another (?) parser and tree-builder for Perl regular 
+YAPE-Regex: expressions. It builds a tree out of a regex, but at the moment, the extent 
+YAPE-Regex: of the extraction tool for the tree is quite limited. However, the tree can 
+YAPE-Regex: be useful to extension modules.
+YAPE-Regex:
+YAPE-Regex:
+YAPE-Regex:
+YAPE-Regex:
+YAPE-Regex:

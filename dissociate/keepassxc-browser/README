@@ -1,0 +1,6 @@
+Chrome extension for KeePassXC with Native Messaging.
+
+This is a heavily forked version of pfn's chromeIPass. 
+Some changes merged also from smorks' KeePassHttp-Connector 
+fork. For testing purposes, please use following unofficial 
+KeePassXC release's.
